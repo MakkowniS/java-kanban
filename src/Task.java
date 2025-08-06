@@ -13,8 +13,6 @@ public class Task {
         this.status = StatusOfTask.NEW;
     }
 
-
-
     public String getName() {
         return name;
     }

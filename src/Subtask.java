@@ -1,6 +1,6 @@
 public class Subtask extends Task{
 
-    private int epicId;
+    private int epicId; // Принадлежность к эпику
 
 
 
