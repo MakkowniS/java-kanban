@@ -1,16 +1,10 @@
 import java.util.HashMap;
-import java.util.ArrayList;
 
 public class TaskManager {
-
-    static int id = 0; // Основной счётчик id
-    HashMap<Integer, Object> newTasks = new HashMap<>(); // Таблица Новых
-    HashMap<Integer, Object> inProgressTasks = new HashMap<>(); // Таблица В Процессе
-    HashMap<Integer, Object> doneTasks = new HashMap<>(); // Таблица Завершённых
-
-    public static void main(String[] args) {
+    HashMap<Integer, Object> tasks = new HashMap<>(); // Таблица Задач
+    HashMap<Integer, Object> epics = new HashMap<>(); // Таблица Эпиков
+    HashMap<Integer, Object> subtasks = new HashMap<>(); // Таблица Подзадач
+    private int id = 1; // Сквозной счётчик id
 
 
-
-    }
 }

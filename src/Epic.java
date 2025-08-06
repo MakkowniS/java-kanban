@@ -1,14 +1,35 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Epic extends Task{
-    int numberOfSubtasks; // Число входящих подзадач
-    HashMap<Integer, Subtask> subtasks;
+     // Число входящих подзадач
+    private ArrayList<Integer> subtasksId;
 
-    public Epic(String name, String description, int numberOfSubtasks) {
+
+    public Epic(String name, String description, ArrayList<Integer> subtaskId) {
         super(name, description);
-        this.numberOfSubtasks = numberOfSubtasks; // Указывается число подзадач
-        this.status = StatusOfTask.NEW; // По умолчанию Эпик - новый
-        this.subtasks = new HashMap<>(); // Таблица подзадач
+        this.subtasksId = subtaskId;
+    }
 
+    public ArrayList<Integer> getSubtasksId() {
+        return subtasksId;
+    }
+
+    public void addSubtaskId(int subtaskId){
+        subtasksId.add(subtaskId);
+    }
+
+    public void removeSubtaskId(int subtaskId){
+        subtasksId.remove(subtaskId);
+    }
+
+    @Override
+    public String toString() {
+        return "Epic{" +
+                "name='" + getName() + '\'' +
+                ", description='" + getDescription() + '\'' +
+                ", id=" + getId() + '\'' +
+                ", status=" + getStatus() +
+                ", subtasksId=" + subtasksId +
+                '}';
     }
 }
