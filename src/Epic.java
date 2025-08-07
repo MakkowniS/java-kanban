@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Epic extends Task{
+public class Epic extends Task {
 
     private final ArrayList<Integer> subtasksId;
 
@@ -14,16 +14,16 @@ public class Epic extends Task{
         return subtasksId;
     }
 
-    public void addSubtaskId(int subtaskId){
+    public void addSubtaskId(int subtaskId) {
         subtasksId.add(subtaskId);
     } // Добавить подзадачу к эпику
 
-    public void removeSubtaskId(int subtaskId){
+    public void removeSubtaskId(int subtaskId) {
         int position = subtasksId.indexOf(subtaskId);
         subtasksId.remove(position);
     } // Убрать подзадачу из эпика
 
-    public void clearAllSubtasksId(){
+    public void clearAllSubtasksId() {
         subtasksId.clear();
     }
 

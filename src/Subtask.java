@@ -1,7 +1,6 @@
-public class Subtask extends Task{
+public class Subtask extends Task {
 
     private int epicId; // Принадлежность к эпику
-
 
 
     public Subtask(String name, String description, int epicId) {
