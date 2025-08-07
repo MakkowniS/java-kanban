@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Epic extends Task{
 
-    private ArrayList<Integer> subtasksId;
+    private final ArrayList<Integer> subtasksId;
 
 
     public Epic(String name, String description) {
@@ -19,8 +19,13 @@ public class Epic extends Task{
     } // Добавить подзадачу к эпику
 
     public void removeSubtaskId(int subtaskId){
-        subtasksId.remove(subtaskId);
+        int position = subtasksId.indexOf(subtaskId);
+        subtasksId.remove(position);
     } // Убрать подзадачу из эпика
+
+    public void clearAllSubtasksId(){
+        subtasksId.clear();
+    }
 
     @Override
     public String toString() {
