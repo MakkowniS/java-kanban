@@ -4,7 +4,6 @@ public class Epic extends Task {
 
     private final ArrayList<Integer> subtasksId;
 
-
     public Epic(String name, String description) {
         super(name, description);
         this.subtasksId = new ArrayList<>();
@@ -19,8 +18,7 @@ public class Epic extends Task {
     } // Добавить подзадачу к эпику
 
     public void removeSubtaskId(int subtaskId) {
-        int position = subtasksId.indexOf(subtaskId);
-        subtasksId.remove(position);
+        subtasksId.remove(Integer.valueOf(subtaskId));
     } // Убрать подзадачу из эпика
 
     public void clearAllSubtasksId() {

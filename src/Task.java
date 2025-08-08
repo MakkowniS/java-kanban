@@ -6,7 +6,6 @@ public class Task {
     private int id;
     private StatusOfTask status;
 
-
     public Task(String name, String description) { // Конструктор для обычных задач и подзадач
         this.name = name;
         this.description = description;
