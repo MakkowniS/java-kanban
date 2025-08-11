@@ -1,3 +1,5 @@
+package ru.yandex.taskmanager.tasks;
+
 public class Subtask extends Task {
 
     private int epicId; // Принадлежность к эпику
@@ -17,7 +19,7 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
+        return "ru.yandex.taskmanager.tasks.Subtask{" +
                 "name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() + '\'' +

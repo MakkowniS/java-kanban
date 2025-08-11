@@ -1,3 +1,8 @@
+package ru.yandex.taskmanager.manager;
+
+import ru.yandex.taskmanager.tasks.*;
+
+
 import java.util.HashMap;
 import java.util.ArrayList;
 
