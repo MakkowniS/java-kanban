@@ -11,14 +11,12 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>(); // Таблица Задач
     private final HashMap<Integer, Epic> epics = new HashMap<>(); // Таблица Эпиков
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>(); // Таблица Подзадач
-    private final ArrayList<Task> history = new ArrayList<>(); // Список для хранения истории
     private int idCounter = 1; // Сквозной счётчик id
-    private final int historyLimit = 10;
-
+    HistoryManager historyManager = Managers.getDefaultHistory();
     /// /// Блок обычных задач
 
     @Override
-    public ArrayList<Task> getAllTasks() {
+    public ArrayList<Task> getTasks() {
         return new ArrayList<>(tasks.values());
     }
 
@@ -32,7 +30,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTask(int id) {
-        addInHistory(tasks.get(id));
+        historyManager.add(tasks.get(id));
         return tasks.get(id);
     }
 
@@ -57,7 +55,7 @@ public class InMemoryTaskManager implements TaskManager {
     /// /// Блок эпиков
 
     @Override
-    public ArrayList<Epic> getAllEpics() {
+    public ArrayList<Epic> getEpics() {
         return new ArrayList<>(epics.values());
     }
 
@@ -71,7 +69,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpic(int id) {
-        addInHistory(epics.get(id));
+        historyManager.add(epics.get(id));
         return epics.get(id);
     }
 
@@ -106,7 +104,7 @@ public class InMemoryTaskManager implements TaskManager {
     /// /// Блок подзадач
 
     @Override
-    public ArrayList<Subtask> getAllSubtasks() {
+    public ArrayList<Subtask> getSubtasks() {
         return new ArrayList<>(subtasks.values());
     }
 
@@ -123,7 +121,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtask(int id) {
-        addInHistory(subtasks.get(id));
+        historyManager.add(subtasks.get(id));
         return subtasks.get(id);
     }
 
@@ -157,19 +155,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /// ///
-    ////// Работа с историей
-
-    @Override
-    public void addInHistory(Task task){
-        if (history.size() >= historyLimit) {
-            history.removeFirst();
-        }
-        history.add(task);
-    }
+    /// История
 
     @Override
     public List<Task> getHistory(){
-        return history;
+        return historyManager.getHistory();
     }
 
     /// ///
@@ -218,4 +208,5 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     }
+
 }

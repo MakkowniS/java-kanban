@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TaskManager {
 
-    ArrayList<Task> getAllTasks();
+    ArrayList<Task> getTasks();
 
     void createTask(Task task);
 
@@ -19,7 +19,7 @@ public interface TaskManager {
 
     void removeTask(int id);
 
-    ArrayList<Epic> getAllEpics();
+    ArrayList<Epic> getEpics();
 
     void createEpic(Epic epic);
 
@@ -31,7 +31,7 @@ public interface TaskManager {
 
     void removeEpic(int id);
 
-    ArrayList<Subtask> getAllSubtasks();
+    ArrayList<Subtask> getSubtasks();
 
     void createSubtask(Subtask subtask);
 
@@ -43,11 +43,34 @@ public interface TaskManager {
 
     void removeSubtask(int id);
 
-    void addInHistory(Task task);
-
-    List<Task> getHistory();
-
     ArrayList<Subtask> getSubtasksByEpicId(int epicId);
 
     void updateEpicStatus(int epicId);
+
+    List<Task> getHistory();
+
+    default void printAllTasks() {
+        System.out.println("Задачи:");
+        for (Task task : getTasks()) {
+            System.out.println(task);
+        }
+
+        System.out.println("Эпики:");
+        for (Epic epic : getEpics()) {
+            System.out.println(epic);
+            for (Subtask subtask : getSubtasksByEpicId(epic.getId())) {
+                System.out.println("--> " + subtask);
+            }
+        }
+
+        System.out.println("Подзадачи:");
+        for (Subtask subtask : getSubtasks()) {
+            System.out.println(subtask);
+        }
+
+        System.out.println("История:");
+        for (Task task : getHistory()) {
+            System.out.println(task);
+        }
+    }
 }
