@@ -14,15 +14,17 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task){
-        if (task instanceof Subtask){ // Копирование объекта класса в историю
-            history.add(new Subtask((Subtask)task));
-        } else if (task instanceof Epic){
-            history.add(new Epic((Epic)task));
-        } else {
-            history.add(new Task(task));
-        }
-        if (history.size() >= historyLimit) {
-            history.removeFirst();
+        if (task != null) {
+            if (task instanceof Subtask) { // Копирование объекта класса в историю
+                history.add(new Subtask((Subtask) task));
+            } else if (task instanceof Epic) {
+                history.add(new Epic((Epic) task));
+            } else {
+                history.add(new Task(task));
+            }
+            if (history.size() >= historyLimit) {
+                history.removeFirst();
+            }
         }
     }
 

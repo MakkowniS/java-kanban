@@ -2,10 +2,7 @@ package ru.yandex.taskmanager.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.taskmanager.tasks.Epic;
-import ru.yandex.taskmanager.tasks.StatusOfTask;
-import ru.yandex.taskmanager.tasks.Subtask;
-import ru.yandex.taskmanager.tasks.Task;
+import ru.yandex.taskmanager.tasks.*;
 
 import java.util.List;
 
@@ -178,21 +175,90 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldRemoveTaskAndClearTasks() {
+    void shouldRemoveTasksEpicSubtasksAndClearTables() {
+        /// Task
         Task task = new Task("Test Task", "Test description");
         Task task2 = new Task("Test Task2", "Test description2");
-
         taskManager.createTask(task);
         taskManager.createTask(task2);
-
         taskManager.removeTask(task.getId());
-        List<Task> tasks = taskManager.getTasks();
-
-        assertFalse(tasks.contains(task), "Задача не удалена.");
+        assertNull(taskManager.getTask(task.getId()), "Задача не удалена.");
 
         taskManager.clearAllTasks();
         assertTrue(taskManager.getTasks().isEmpty(), "Список задач не очищен.");
 
+        /// Epics and Subtasks
+
+        Epic epic = new Epic("Test epic", "Test epic description");
+        Epic epic2 = new Epic("Test epic2", "Test epic2 Description");
+        taskManager.createEpic(epic);
+        taskManager.createEpic(epic2);
+        Subtask subtask = new Subtask("Test Subtask", "Test Subtask description", epic.getId());
+        Subtask subtask2 = new Subtask("Test Subtask", "Test Subtask description", epic2.getId());
+        taskManager.createSubtask(subtask);
+        taskManager.createSubtask(subtask2);
+        taskManager.removeEpic(epic.getId());
+
+        assertNull(taskManager.getEpic(epic.getId()), "Эпик не удалён.");
+        assertNull(taskManager.getEpic(subtask.getId()), "Подзадача должна удалиться вместе с эпиком.");
+
+        List<Integer> epicSubtasks = epic2.getSubtasksId();
+
+        assertTrue(epicSubtasks.contains(subtask2.getId()), "Подзадача не появилась в списке эпика.");
+
+        taskManager.removeSubtask(subtask2.getId());
+        assertFalse(epicSubtasks.contains(subtask2.getId()), "Подзадача не удалилась из списка эпика.");
+        assertNull(taskManager.getSubtask(subtask2.getId()), "Подзадача не удалена.");
+
+        subtask = new Subtask("Test Subtask", "Test Description", epic2.getId());
+        taskManager.createSubtask(subtask);
+        taskManager.clearAllSubtasks();
+
+        assertTrue(taskManager.getSubtasks().isEmpty(), "Список подзадач не очистился.");
+
+        subtask = new Subtask("Test Subtask", "Test Description", epic2.getId());
+        taskManager.createSubtask(subtask);
+        taskManager.clearAllEpics();
+
+        assertTrue(taskManager.getEpics().isEmpty(), "Список эпиков не очистился.");
+        assertTrue(taskManager.getSubtasks().isEmpty(), "Список подзадач не очистился вместе со списком эпиков.");
+
     }
 
+    @Test
+    void shouldUpdateExistingTasksEpicsSubtasksAndChangeStatus(){
+        Task task = new Task("Test Task", "Test Task description");
+        taskManager.createTask(task);
+        Epic epic = new Epic("Test epic", "Test epic description");
+        taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("Test Subtask", "Test Subtask description", epic.getId());
+        taskManager.createSubtask(subtask);
+
+        /// Task Update
+        Task newTask = new Task("Test NewTask", "Test NewTask Description");
+        newTask.setId(task.getId());
+        taskManager.updateTask(newTask);
+
+        assertEquals(taskManager.getTask(task.getId()).getName(), newTask.getName(), "Имя задачи не обновилось.");
+        assertEquals(taskManager.getTask(task.getId()).getDescription(), newTask.getDescription(), "Описание задачи не обновилось.");
+
+        ///  Epic Update
+        Epic newEpic = new Epic("Test NewEpic", "Test NewEpic Description");
+        newEpic.setId(epic.getId());
+        taskManager.updateEpic(newEpic);
+
+        assertEquals(taskManager.getEpic(epic.getId()).getName(), newEpic.getName(), "Имя эпика не обновилось.");
+        assertEquals(taskManager.getEpic(epic.getId()).getDescription(), newEpic.getDescription(), "Описание эпика не обновилось.");
+
+        /// Subtask Update
+        Subtask newSubtask = new  Subtask("Test NewSubtask", "Test NewSubtask description", epic.getId());
+        newSubtask.setId(subtask.getId());
+        newSubtask.setStatus(StatusOfTask.DONE);
+        taskManager.updateSubtask(newSubtask);
+
+        assertEquals(taskManager.getSubtask(subtask.getId()).getName(), newSubtask.getName(), "Имя подзадачи не обновилось.");
+        assertEquals(taskManager.getSubtask(subtask.getId()).getDescription(), newSubtask.getDescription(), "Описание подзадачи не обновилось.");
+        assertEquals(taskManager.getSubtask(subtask.getId()).getStatus(), newSubtask.getStatus(), "Статус подзадачи не обновился.");
+        assertEquals(StatusOfTask.DONE, taskManager.getEpic(newSubtask.getEpicId()).getStatus(), "Статус эпика не поменялся вслед за подзадачей.");
+    }
 }
