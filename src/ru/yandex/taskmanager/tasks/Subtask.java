@@ -9,7 +9,7 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
-    public Subtask(Subtask otherSubtask){
+    public Subtask(Subtask otherSubtask) {
         super(otherSubtask);
         this.epicId = otherSubtask.epicId;
     }
@@ -20,6 +20,11 @@ public class Subtask extends Task {
 
     public void setEpicId(int epicId) {
         this.epicId = epicId;
+    }
+
+    @Override
+    public Task objectCopy() {
+        return new Subtask(this);
     }
 
     @Override

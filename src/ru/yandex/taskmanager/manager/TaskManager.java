@@ -45,32 +45,6 @@ public interface TaskManager {
 
     ArrayList<Subtask> getSubtasksByEpicId(int epicId);
 
-    void updateEpicStatus(int epicId);
-
     List<Task> getHistory();
 
-    default void printAllTasks() {
-        System.out.println("Задачи:");
-        for (Task task : getTasks()) {
-            System.out.println(task);
-        }
-
-        System.out.println("Эпики:");
-        for (Epic epic : getEpics()) {
-            System.out.println(epic);
-            for (Subtask subtask : getSubtasksByEpicId(epic.getId())) {
-                System.out.println("--> " + subtask);
-            }
-        }
-
-        System.out.println("Подзадачи:");
-        for (Subtask subtask : getSubtasks()) {
-            System.out.println(subtask);
-        }
-
-        System.out.println("История:");
-        for (Task task : getHistory()) {
-            System.out.println(task);
-        }
-    }
 }

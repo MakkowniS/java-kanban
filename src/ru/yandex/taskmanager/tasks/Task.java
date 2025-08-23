@@ -14,7 +14,7 @@ public class Task {
         this.status = StatusOfTask.NEW;
     }
 
-    public Task(Task otherTask){
+    public Task(Task otherTask) { // Конструктор для копирования в историю
         this.name = otherTask.getName();
         this.description = otherTask.getDescription();
         this.id = otherTask.getId();
@@ -51,6 +51,10 @@ public class Task {
 
     public void setStatus(StatusOfTask status) {
         this.status = status;
+    }
+
+    public Task objectCopy() {
+        return new Task(this);
     }
 
     @Override

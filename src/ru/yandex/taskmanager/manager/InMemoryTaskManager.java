@@ -12,7 +12,8 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epics = new HashMap<>(); // Таблица Эпиков
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>(); // Таблица Подзадач
     private int idCounter = 1; // Сквозной счётчик id
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
+
     /// /// Блок обычных задач
 
     @Override
@@ -158,7 +159,7 @@ public class InMemoryTaskManager implements TaskManager {
     /// История
 
     @Override
-    public List<Task> getHistory(){
+    public List<Task> getHistory() {
         return historyManager.getHistory();
     }
 
@@ -175,8 +176,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subtasksByEpic;
     }
 
-    @Override
-    public void updateEpicStatus(int epicId) {
+    private void updateEpicStatus(int epicId) {
         if (epics.containsKey(epicId)) {
             Epic epic = epics.get(epicId);
 

@@ -33,6 +33,11 @@ public class Epic extends Task {
     }
 
     @Override
+    public Task objectCopy() {
+        return new Epic(this);
+    }
+
+    @Override
     public String toString() {
         return "ru.yandex.taskmanager.tasks.Epic{" +
                 "name='" + getName() + '\'' +
