@@ -1,23 +1,10 @@
 package ru.yandex.taskmanager.tasks;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.taskmanager.manager.Managers;
-import ru.yandex.taskmanager.manager.TaskManager;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubtaskTest {
-
-    private static TaskManager taskManager;
-
-    @BeforeEach
-    void creatingDefaultTasks() {
-        taskManager = Managers.getDefault();
-
-    }
 
     @Test
     void shouldBeEqualsIfHasEqualsIdTaskExtends() {
@@ -30,13 +17,21 @@ class SubtaskTest {
 
     @Test
     void subtaskCannotBeItsOwnEpic() {
-        Epic epic = new Epic("Test Epic", "Test Description");
-        taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("Test Subtask", "Test Description", 1);
+        subtask.setId(1);
 
-        Subtask subtask = new Subtask("Test Subtask", "Test Description", epic.getId() + 1);
-        taskManager.createSubtask(subtask);
+        assertNotEquals(subtask.getId(), subtask.getEpicId(), "Subtask не может быть своим же Epic");
+    }
 
-        List<Subtask> subtasks = taskManager.getSubtasks();
-        assertFalse(subtasks.contains(subtask)); // Проверка на наличие Subtask, которая является своим эпиком в таблице
+    @Test
+    void shouldSetAndReturnEpicId() {
+        Subtask subtask = new Subtask("Test Subtask", "Test Description", 1);
+
+        assertEquals(1,  subtask.getEpicId(), "Epic ID не возвращается");
+
+        subtask.setEpicId(2);
+
+        assertEquals(2,  subtask.getEpicId(), "Epic ID не изменяется.");
+
     }
 }

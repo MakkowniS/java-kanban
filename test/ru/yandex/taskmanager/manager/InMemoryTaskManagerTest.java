@@ -3,6 +3,7 @@ package ru.yandex.taskmanager.manager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.taskmanager.tasks.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
@@ -32,6 +33,27 @@ class InMemoryTaskManagerTest {
         subtask2 = new Subtask("Test Subtask2", "Test Description2", epic2.getId());
         taskManager.createSubtask(subtask);
         taskManager.createSubtask(subtask2);
+    }
+
+    @Test
+    void taskWithManualAndAutoIdShouldNotConflict() {
+        task.setId(50);
+
+        assertNotEquals(taskManager.getTask(task.getId()), taskManager.getTask(task2.getId()), "Id должны быть уникальны");
+    }
+
+    @Test
+    void taskFieldsShouldNotChangeAfterAdding() {
+        Task newTask = new Task("Test Task", "Test Description");
+        String newTaskName = newTask.getName(); // Получаем поля задачи до добавления
+        String newTaskDescription = newTask.getDescription();
+        StatusOfTask newTaskStatus = newTask.getStatus();
+        taskManager.createTask(newTask);
+        Task createdTask = taskManager.getTask(newTask.getId());
+
+        assertEquals(newTaskName, createdTask.getName(), "Название новой задачи и добавленной не совпадает.");
+        assertEquals(newTaskDescription, createdTask.getDescription(), "Описание новой задачи и добавленной не совпадает.");
+        assertEquals(newTaskStatus, createdTask.getStatus(), "Статус новой задачи и добавленной не совпадает.");
     }
 
     @Test
@@ -153,5 +175,17 @@ class InMemoryTaskManagerTest {
         assertEquals(taskManager.getSubtask(subtask.getId()).getDescription(), newSubtask.getDescription(), "Описание подзадачи не обновилось.");
         assertEquals(taskManager.getSubtask(subtask.getId()).getStatus(), newSubtask.getStatus(), "Статус подзадачи не обновился.");
         assertEquals(StatusOfTask.DONE, taskManager.getEpic(newSubtask.getEpicId()).getStatus(), "Статус эпика не поменялся вслед за подзадачей.");
+    }
+
+    @Test
+    void shouldReturnListOfEpicsSubtasks() {
+        List<Subtask> epicSubtasks = taskManager.getSubtasksByEpicId(epic.getId());
+        assertNotNull(epicSubtasks, "Список подзадач не возвращается.");
+    }
+
+    @Test
+    void shouldReturnHistoryList() {
+        taskManager.getTask(task.getId());
+        assertNotNull(taskManager.getHistory(), "История не возвращается.");
     }
 }

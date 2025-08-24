@@ -21,7 +21,9 @@ public class Epic extends Task {
     }
 
     public void addSubtaskId(int subtaskId) {
-        subtasksId.add(subtaskId);
+        if (subtaskId != this.getId()) {
+            subtasksId.add(subtaskId);
+        }
     } // Добавить подзадачу к эпику
 
     public void removeSubtaskId(int subtaskId) {
