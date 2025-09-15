@@ -134,8 +134,8 @@ class InMemoryTaskManagerTest {
         assertNotNull(epic.getSubtasksId(), "В Эпике нет записанных подзадач.");
         assertNotNull(epic2.getSubtasksId(), "В Эпике нет записанных подзадач.");
         taskManager.clearAllSubtasks();
-        assertNull(epic.getSubtasksId(), "Эпики не очистились от подзадач.");
-        assertNull(epic2.getSubtasksId(), "Эпики не очистились от подзадач.");
+        assertEquals(0, epic.getSubtasksId().size(), "Эпики не очистились от подзадач.");
+        assertEquals(0, epic2.getSubtasksId().size(), "Эпики не очистились от подзадач.");
 
     }
 
