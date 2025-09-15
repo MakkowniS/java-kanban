@@ -114,6 +114,32 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    void editingReturnedTaskFromListChangesStoredTask(){
+        Task returnedTask = taskManager.getTask(task.getId());
+        returnedTask.setName("New Name Task");
+
+        assertEquals("New Name Task", taskManager.getTask(task.getId()).getName(), "Изменение" +
+                "возвращаемого объекта должно повлиять на объект внутри менеджера.");
+    }
+
+    @Test
+    void removedSubtaskShouldBeRemovedFromEpicSubtasksList(){
+        assertTrue(epic.getSubtasksId().contains(subtask.getId()), "Epic не знает о своей подзадаче.");
+        taskManager.removeSubtask(subtask.getId());
+        assertFalse(epic.getSubtasksId().contains(subtask.getId()), "Подзадача не удалилась из Эпика.");
+    }
+
+    @Test
+    void clearAllSubtasksShouldClearAllEpicsSubtasksLists(){
+        assertNotNull(epic.getSubtasksId(), "В Эпике нет записанных подзадач.");
+        assertNotNull(epic2.getSubtasksId(), "В Эпике нет записанных подзадач.");
+        taskManager.clearAllSubtasks();
+        assertNull(epic.getSubtasksId(), "Эпики не очистились от подзадач.");
+        assertNull(epic2.getSubtasksId(), "Эпики не очистились от подзадач.");
+
+    }
+
+    @Test
     void shouldRemoveSubtask() {
         List<Integer> epicSubtasks = epic.getSubtasksId();
         taskManager.removeSubtask(subtask.getId());

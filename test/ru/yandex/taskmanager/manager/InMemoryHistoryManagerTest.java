@@ -11,46 +11,39 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryHistoryManagerTest {
 
     private static HistoryManager historyManager;
-    private static Task task;
+    private static Task task1;
 
     @BeforeEach
     void setUp() {
         historyManager = Managers.getDefaultHistory();
-        task = new Task("Test Task", "Test Description");
+        task1 = new Task("Test Task", "Test Description");
+        task1.setId(1);
     }
 
     @Test
     void add() {
-        historyManager.add(task);
+        historyManager.add(task1);
         final List<Task> history = historyManager.getHistory();
         assertNotNull(history, "После добавления задачи, история не должна быть пустой.");
         assertEquals(1, history.size(), "После добавления задачи, история не должна быть пустой.");
     }
 
-    @Test
-    void shouldDeleteFirstIfHistorySize11() {
-        historyManager.add(task);
-        for (int i = 2; i <= 11; i++) {
-            Task newTask = new Task("Test Task" + i, "Test Description" + i);
-            historyManager.add(newTask);
-        }
-        List<Task> history = historyManager.getHistory();
-        assertEquals(10, history.size(), "История выходит за указанный лимит.");
-    }
 
     @Test
     void historyMustKeepPreviousVersionOfTask() {
-        TaskManager taskManager = Managers.getDefault();
-        Task task = new Task("Test Task", "Test Description");
-        taskManager.createTask(task);
-        taskManager.getTask(task.getId());
-        task.setName("New Name");
-        task.setDescription("New Description");
-        taskManager.updateTask(task);
-        Task historyTask = taskManager.getHistory().get(0);
+        historyManager.add(task1);
+        task1.setName("New Name Task");
+        Task taskInHistory = historyManager.getHistory().get(0);
+        assertEquals("Test Task", taskInHistory.getName(), "Должно сохраниться исходное имя.");
+    }
 
-        assertEquals("Test Task", historyTask.getName(), "Должно сохраниться исходное имя.");
-        assertEquals("Test Description", historyTask.getDescription(), "Должно сохраниться исходное описание.");
+    @Test
+    void remove() {
+        historyManager.add(task1);
+        assertNotNull(historyManager.getHistory(), "История не должна быть пустой.");
+
+        historyManager.remove(task1.getId());
+        assertEquals(0, historyManager.getHistory().size(), "Задача должна удалиться из истории.");
     }
 
 }
