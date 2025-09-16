@@ -12,12 +12,18 @@ class InMemoryHistoryManagerTest {
 
     private static HistoryManager historyManager;
     private static Task task1;
+    private static Task task2;
+    private static Task task3;
 
     @BeforeEach
     void setUp() {
         historyManager = Managers.getDefaultHistory();
         task1 = new Task("Test Task", "Test Description");
+        task2 = new Task("Test Task2", "Test Description2");
+        task3 = new Task("Test Task3", "Test Description3");
         task1.setId(1);
+        task2.setId(2);
+        task3.setId(3);
     }
 
     @Test
@@ -44,6 +50,30 @@ class InMemoryHistoryManagerTest {
 
         historyManager.remove(task1.getId());
         assertEquals(0, historyManager.getHistory().size(), "Задача должна удалиться из истории.");
+    }
+
+    @Test
+    void shouldRemoveTaskOnAnyPosition(){
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+        historyManager.remove(task1.getId());
+
+        assertEquals(2, historyManager.getHistory().get(0).getId(), "На первой позиции должен остаться ID 2");
+        assertEquals(3, historyManager.getHistory().get(1).getId(), "на второй позиции должен остаться ID 3");
+
+        historyManager.add(task1);
+        historyManager.remove(task3.getId());
+
+        assertEquals(2, historyManager.getHistory().get(0).getId(), "На первой позиции должен остаться ID 2");
+        assertEquals(1, historyManager.getHistory().get(1).getId(), "на второй позиции должен остаться ID 1");
+
+        historyManager.add(task3);
+        historyManager.remove(task3.getId());
+
+        assertEquals(2, historyManager.getHistory().get(0).getId(), "На первой позиции должен остаться ID 2");
+        assertEquals(1, historyManager.getHistory().get(1).getId(), "на второй позиции должен остаться ID 1");
+
     }
 
 }
