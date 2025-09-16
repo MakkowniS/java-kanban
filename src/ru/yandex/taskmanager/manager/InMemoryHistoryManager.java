@@ -9,16 +9,16 @@ import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final Map<Integer, Node<Task>> historyMap = new HashMap<>();
-    private Node<Task> head;
-    private Node<Task> tail;
+    private final Map<Integer, Node> historyMap = new HashMap<>();
+    private Node head;
+    private Node tail;
 
-    private static class Node<Task> {
-        public Node<Task> next;
-        public Node<Task> prev;
+    private static class Node {
+        public Node next;
+        public Node prev;
         public Task data;
 
-        public Node(Node<Task> prev, Task data, Node<Task> next) {
+        public Node(Node prev, Task data, Node next) {
             this.data = data;
             this.next = next;
             this.prev = prev;
@@ -38,16 +38,16 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        Node<Task> node = historyMap.remove(id);
+        Node node = historyMap.remove(id);
         if (node != null) {
             removeNode(node);
         }
     }
 
     @Override
-    public List<Task> getHistory() {
-        List<Task> history = new ArrayList<>();
-        Node<Task> node = head;
+    public List getHistory() {
+        List history = new ArrayList<>();
+        Node node = head;
 
         while (node != null) {
             history.add(node.data);
@@ -58,7 +58,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void linkLast(Task task) {
-        final Node<Task> newNode = new Node<>(tail, task, null);
+        final Node newNode = new Node(tail, task, null);
         if (tail == null) {
             head = newNode;
         } else {
@@ -67,9 +67,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         tail = newNode;
     }
 
-    private void removeNode(Node<Task> node) {
-        Node<Task> prev = node.prev;
-        Node<Task> next = node.next;
+    private void removeNode(Node node) {
+        Node prev = node.prev;
+        Node next = node.next;
 
         if (prev == null) {
             head = next;
