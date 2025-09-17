@@ -30,7 +30,6 @@ class InMemoryHistoryManagerTest {
     void add() {
         historyManager.add(task1);
         final List<Task> history = historyManager.getHistory();
-        assertNotNull(history, "После добавления задачи, история не должна быть пустой.");
         assertEquals(1, history.size(), "После добавления задачи, история не должна быть пустой.");
     }
 
@@ -53,27 +52,33 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveTaskOnAnyPosition(){
+    void shouldRemoveTaskFromBeginning(){
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
         historyManager.remove(task1.getId());
 
-        assertEquals(2, historyManager.getHistory().get(0).getId(), "На первой позиции должен остаться ID 2");
-        assertEquals(3, historyManager.getHistory().get(1).getId(), "на второй позиции должен остаться ID 3");
+        assertEquals(List.of(task2, task3), historyManager.getHistory(), "Списки не совпадают.");
+    }
 
+    @Test
+    void shouldRemoveTaskFromCenter(){
         historyManager.add(task1);
-        historyManager.remove(task3.getId());
+        historyManager.add(task2);
+        historyManager.add(task3);
+        historyManager.remove(task2.getId());
 
-        assertEquals(2, historyManager.getHistory().get(0).getId(), "На первой позиции должен остаться ID 2");
-        assertEquals(1, historyManager.getHistory().get(1).getId(), "на второй позиции должен остаться ID 1");
+        assertEquals(List.of(task1, task3), historyManager.getHistory(), "Списки не совпадают.");
+    }
 
+    @Test
+    void shouldRemoveTaskFromEnd(){
+        historyManager.add(task1);
+        historyManager.add(task2);
         historyManager.add(task3);
         historyManager.remove(task3.getId());
 
-        assertEquals(2, historyManager.getHistory().get(0).getId(), "На первой позиции должен остаться ID 2");
-        assertEquals(1, historyManager.getHistory().get(1).getId(), "на второй позиции должен остаться ID 1");
-
+        assertEquals(List.of(task1, task2), historyManager.getHistory(), "Списки не совпадают.");
     }
 
 }
