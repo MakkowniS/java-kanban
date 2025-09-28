@@ -14,6 +14,41 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
         this.file = file;
     }
 
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        try {
+            String data = Files.readString(file.toPath());
+            String[] lines = data.split("\n"); // Получаем строки из файла
+
+            for (int i = 1; i < lines.length; i++) { // Пропускаем заголовок
+                String line  = lines[i];
+
+                Task task = fromString(line);
+                int id = task.getId();
+
+                if (task instanceof Task){
+                    manager.putTaskInMap(task);
+                    manager.updateIdCounter(id);
+                } else if (task instanceof Epic){
+                    manager.putEpicInMap((Epic) task);
+                    manager.updateIdCounter(id);
+                } else if (task instanceof Subtask){
+                    manager.putSubtaskInMap((Subtask) task);
+                    Epic subtasksEpic = manager.getEpic(((Subtask) task).getEpicId()); // Добавляем подзадачу к эпику
+                    if (subtasksEpic != null) {
+                        subtasksEpic.addSubtaskId(((Subtask) task).getId());
+                    }
+                    manager.updateIdCounter(id);
+                }
+
+                manager.updateEpicsStatus(); // Обновляем статусы эпиков
+            }
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка чтения файла" + file, e);
+        }
+        return manager;
+    }
+
     void save() {
         StringBuilder sb = new StringBuilder();
         sb.append("id,type,name,status,description,epic");
@@ -35,7 +70,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
         }
     }
 
-    public String toString(Task task){
+    public static String toString(Task task){
         if(task == null){ return ""; }
 
         TypeOfTask type;
@@ -61,7 +96,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
 
     }
 
-    public Task fromString(String str){
+    public static Task fromString(String str){
         String[] split = str.split(",");
 
         int id = Integer.parseInt(split[0]);

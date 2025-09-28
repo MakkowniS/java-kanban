@@ -184,6 +184,34 @@ public class InMemoryTaskManager implements TaskManager {
 
     /// ///
 
+    /// /// Загрузка из файла
+
+    protected void putTaskInMap(Task task) {
+        tasks.put(task.getId(), task);
+    }
+
+    protected void putSubtaskInMap(Subtask subtask) {
+        subtasks.put(subtask.getId(), subtask);
+    }
+
+    protected void putEpicInMap(Epic epic) {
+        epics.put(epic.getId(), epic);
+    }
+
+    protected void updateEpicsStatus(){
+        for (int id :  epics.keySet()) {
+            updateEpicStatus(id);
+        }
+    }
+
+    protected void updateIdCounter(int id){
+        if (id >= idCounter) {
+            idCounter = id + 1;
+        }
+    }
+
+    /// ///
+
     @Override
     public ArrayList<Subtask> getSubtasksByEpicId(int epicId) {
         ArrayList<Subtask> subtasksByEpic = new ArrayList<>(); // Новый список для вывода
