@@ -198,13 +198,13 @@ public class InMemoryTaskManager implements TaskManager {
         epics.put(epic.getId(), epic);
     }
 
-    protected void updateEpicsStatus(){
-        for (int id :  epics.keySet()) {
+    protected void updateEpicsStatus() {
+        for (int id : epics.keySet()) {
             updateEpicStatus(id);
         }
     }
 
-    protected void updateIdCounter(int id){
+    protected void updateIdCounter(int id) {
         if (id >= idCounter) {
             idCounter = id + 1;
         }

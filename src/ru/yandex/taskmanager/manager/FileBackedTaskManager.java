@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     private final File file;
 
     public FileBackedTaskManager(File file) {
@@ -21,15 +21,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
             String[] lines = data.split("\n"); // Получаем строки из файла
 
             for (int i = 1; i < lines.length; i++) { // Пропускаем заголовок
-                String line  = lines[i];
+                String line = lines[i];
 
                 Task task = fromString(line);
                 int id = task.getId();
 
-                if (task instanceof Epic){
+                if (task instanceof Epic) {
                     manager.putEpicInMap((Epic) task);
                     manager.updateIdCounter(id);
-                } else if (task instanceof Subtask){
+                } else if (task instanceof Subtask) {
                     manager.putSubtaskInMap((Subtask) task);
                     Epic subtasksEpic = manager.getEpic(((Subtask) task).getEpicId()); // Добавляем подзадачу к эпику
                     if (subtasksEpic != null) {
@@ -64,13 +64,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
 
         try {
             Files.writeString(file.toPath(), sb.toString());
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new ManagerSaveException("При сохранении произошла ошибка.");
         }
     }
 
-    public static String taskToString(Task task){
-        if(task == null){ return ""; }
+    public static String taskToString(Task task) {
+        if (task == null) {
+            return "";
+        }
 
         TypeOfTask type;
         if (task instanceof Epic) {
@@ -83,29 +85,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
 
         String epicId = "";
         if (task instanceof Subtask) {
-            epicId = String.valueOf(((Subtask)task).getEpicId());
+            epicId = String.valueOf(((Subtask) task).getEpicId());
         }
 
-        return task.getId() + "," +
-                type + "," +
-                task.getName() + "," +
-                task.getStatus() + "," +
-                task.getDescription() + "," +
-                epicId;
-
+        return task.getId() + "," + type + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "," + epicId;
     }
 
-    public static Task fromString(String str){
+    public static Task fromString(String str) {
         String[] split = str.split(",");
 
         int id = Integer.parseInt(split[0]);
         TypeOfTask type = TypeOfTask.valueOf(split[1]);
-        String name =  split[2];
+        String name = split[2];
         StatusOfTask status = StatusOfTask.valueOf(split[3]);
         String description = split[4];
         String epicIdField = split.length > 5 ? split[5] : "";
 
-        switch(type){
+        switch (type) {
             case TASK -> {
                 Task task = new Task(name, description);
                 task.setId(id);
@@ -128,7 +124,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
             default -> throw new IllegalArgumentException("Неизвестный тип: " + type);
         }
     }
-
 
     /// /// Задачи
     @Override
@@ -155,6 +150,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
         save();
     }
     /// ///
+
     /// /// Эпики
     @Override
     public void createEpic(Epic epic) {
@@ -180,9 +176,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
         save();
     }
     /// ///
+
     /// /// Подзадачи
     @Override
-    public void createSubtask(Subtask subtask){
+    public void createSubtask(Subtask subtask) {
         super.createSubtask(subtask);
         save();
     }
