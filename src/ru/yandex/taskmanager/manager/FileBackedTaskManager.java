@@ -26,10 +26,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
                 Task task = fromString(line);
                 int id = task.getId();
 
-                if (task instanceof Task){
-                    manager.putTaskInMap(task);
-                    manager.updateIdCounter(id);
-                } else if (task instanceof Epic){
+                if (task instanceof Epic){
                     manager.putEpicInMap((Epic) task);
                     manager.updateIdCounter(id);
                 } else if (task instanceof Subtask){
@@ -38,29 +35,31 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
                     if (subtasksEpic != null) {
                         subtasksEpic.addSubtaskId(((Subtask) task).getId());
                     }
+                } else {
+                    manager.putTaskInMap(task);
                     manager.updateIdCounter(id);
                 }
 
-                manager.updateEpicsStatus(); // Обновляем статусы эпиков
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка чтения файла" + file, e);
         }
+        manager.updateEpicsStatus(); // Обновляем статусы эпиков
         return manager;
     }
 
     void save() {
         StringBuilder sb = new StringBuilder();
-        sb.append("id,type,name,status,description,epic");
+        sb.append("id,type,name,status,description,epic").append("\n");
 
         for (Task task : getTasks()) {
-            sb.append(toString(task)).append("\n");
+            sb.append(taskToString(task)).append("\n");
         }
         for (Epic epic : getEpics()) {
-            sb.append(toString(epic)).append("\n");
+            sb.append(taskToString(epic)).append("\n");
         }
         for (Subtask subtask : getSubtasks()) {
-            sb.append(toString(subtask)).append("\n");
+            sb.append(taskToString(subtask)).append("\n");
         }
 
         try {
@@ -70,16 +69,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements  TaskM
         }
     }
 
-    public static String toString(Task task){
+    public static String taskToString(Task task){
         if(task == null){ return ""; }
 
         TypeOfTask type;
-        if (task instanceof Task) {
-            type = TypeOfTask.TASK;
-        } else if (task instanceof Epic) {
+        if (task instanceof Epic) {
             type = TypeOfTask.EPIC;
-        } else {
+        } else if (task instanceof Subtask) {
             type = TypeOfTask.SUBTASK;
+        } else {
+            type = TypeOfTask.TASK;
         }
 
         String epicId = "";
