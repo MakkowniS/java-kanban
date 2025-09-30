@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>(); // Таблица Задач
-    private final HashMap<Integer, Epic> epics = new HashMap<>(); // Таблица Эпиков
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>(); // Таблица Подзадач
-    private int idCounter = 1; // Сквозной счётчик id
+    protected final HashMap<Integer, Task> tasks = new HashMap<>(); // Таблица Задач
+    protected final HashMap<Integer, Epic> epics = new HashMap<>(); // Таблица Эпиков
+    protected final HashMap<Integer, Subtask> subtasks = new HashMap<>(); // Таблица Подзадач
+    protected int idCounter = 1; // Сквозной счётчик id
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     /// /// Блок обычных задач
@@ -180,34 +180,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
-    }
-
-    /// ///
-
-    /// /// Загрузка из файла
-
-    protected void putTaskInMap(Task task) {
-        tasks.put(task.getId(), task);
-    }
-
-    protected void putSubtaskInMap(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
-    }
-
-    protected void putEpicInMap(Epic epic) {
-        epics.put(epic.getId(), epic);
-    }
-
-    protected void updateEpicsStatus() {
-        for (int id : epics.keySet()) {
-            updateEpicStatus(id);
-        }
-    }
-
-    protected void updateIdCounter(int id) {
-        if (id >= idCounter) {
-            idCounter = id + 1;
-        }
     }
 
     /// ///

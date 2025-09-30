@@ -53,6 +53,10 @@ public class Task {
         this.status = status;
     }
 
+    public TypeOfTask getType() {
+        return TypeOfTask.TASK;
+    }
+
     public Task objectCopy() {
         return new Task(this);
     }
@@ -79,4 +83,5 @@ public class Task {
                 ", status=" + status +
                 '}';
     }
+
 }
