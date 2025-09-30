@@ -39,7 +39,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     }
                     default -> throw new IllegalArgumentException("Неизвестный тип: " + task.getType());
                 }
-                if (id > manager.idCounter){ manager.idCounter = id; }
+                if (id > manager.idCounter) {
+                    manager.idCounter = id;
+                }
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка чтения файла" + file, e);
