@@ -32,7 +32,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     case TASK -> manager.tasks.put(id, task);
                     case SUBTASK -> {
                         manager.subtasks.put(id, (Subtask) task);
-                        Epic subtasksEpic = manager.getEpic(((Subtask) task).getEpicId()); // Добавляем подзадачу к эпику
+                        Epic subtasksEpic = manager.epics.get(((Subtask) task).getEpicId()); // Добавляем подзадачу к эпику
                         if (subtasksEpic != null) {
                             subtasksEpic.addSubtaskId(task.getId());
                         }
