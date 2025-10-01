@@ -25,6 +25,11 @@ public class Subtask extends Task {
     }
 
     @Override
+    public TypeOfTask getType() {
+        return TypeOfTask.SUBTASK;
+    }
+
+    @Override
     public void setId(int id) {
         if (id != this.epicId) {
             super.setId(id);

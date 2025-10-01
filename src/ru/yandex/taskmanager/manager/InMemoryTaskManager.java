@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>(); // Таблица Задач
-    private final HashMap<Integer, Epic> epics = new HashMap<>(); // Таблица Эпиков
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>(); // Таблица Подзадач
-    private int idCounter = 1; // Сквозной счётчик id
+    protected final HashMap<Integer, Task> tasks = new HashMap<>(); // Таблица Задач
+    protected final HashMap<Integer, Epic> epics = new HashMap<>(); // Таблица Эпиков
+    protected final HashMap<Integer, Subtask> subtasks = new HashMap<>(); // Таблица Подзадач
+    protected int idCounter = 1; // Сквозной счётчик id
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     /// /// Блок обычных задач
@@ -227,5 +227,4 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     }
-
 }

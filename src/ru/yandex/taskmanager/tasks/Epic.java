@@ -35,6 +35,11 @@ public class Epic extends Task {
     }
 
     @Override
+    public TypeOfTask getType() {
+        return TypeOfTask.EPIC;
+    }
+
+    @Override
     public Task objectCopy() {
         return new Epic(this);
     }
