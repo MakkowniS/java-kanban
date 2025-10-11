@@ -130,6 +130,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtasks.put(subtask.getId(), subtask);
             Epic epic = epics.get(subtask.getEpicId()); // Добавление подзадачи в список к эпику
             epic.addSubtaskId(subtask.getId());
+            updateEpicTime(subtask.getEpicId());
             updateEpicStatus(subtask.getEpicId());
         }
     }
@@ -149,6 +150,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.clear();
         for (Epic epic : epics.values()) {
             epic.clearAllSubtasksId();
+            updateEpicStatus(epic.getId());
             updateEpicStatus(epic.getId());
         }
     }
@@ -170,6 +172,7 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epics.get(epicId);
             epic.removeSubtaskId(id);
         }
+        updateEpicTime(epicId);
         updateEpicStatus(epicId);
 
     }
@@ -193,6 +196,12 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return subtasksByEpic;
+    }
+
+    private void updateEpicTime(int epicId) {
+        Epic epic = epics.get(epicId);
+        ArrayList<Subtask> subtasksByEpic = getSubtasksByEpicId(epicId);
+        epic.updateEpicTimeFields(subtasksByEpic);
     }
 
     private void updateEpicStatus(int epicId) {

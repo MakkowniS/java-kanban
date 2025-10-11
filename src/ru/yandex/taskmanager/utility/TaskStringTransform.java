@@ -2,6 +2,9 @@ package ru.yandex.taskmanager.utility;
 
 import ru.yandex.taskmanager.tasks.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class TaskStringTransform {
 
     public static String taskToString(Task task) {
@@ -14,7 +17,8 @@ public class TaskStringTransform {
             epicId = String.valueOf(((Subtask) task).getEpicId());
         }
 
-        return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "," + epicId;
+        return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() +
+                ","+ task.getStartTime() + "," + task.getDuration().toMinutes() + "," + epicId;
     }
 
     public static Task fromString(String str) {
@@ -25,29 +29,25 @@ public class TaskStringTransform {
         String name = split[2];
         StatusOfTask status = StatusOfTask.valueOf(split[3]);
         String description = split[4];
-        String epicIdField = split.length > 5 ? split[5] : "";
+        LocalDateTime startTime = LocalDateTime.parse(split[5]);
+        Duration duration = Duration.ofMinutes(Long.parseLong(split[6]));
+        String epicIdField = split.length > 7 ? split[7] : "";
+        Task task;
 
         switch (type) {
-            case TASK -> {
-                Task task = new Task(name, description);
-                task.setId(id);
-                task.setStatus(status);
-                return task;
-            }
-            case EPIC -> {
-                Epic epic = new Epic(name, description);
-                epic.setId(id);
-                epic.setStatus(status);
-                return epic;
-            }
+            case TASK -> task = new Task(name, description);
+            case EPIC -> task = new Epic(name, description);
             case SUBTASK -> {
                 int epicId = epicIdField.isEmpty() ? 0 : Integer.parseInt(epicIdField);
-                Subtask subtask = new Subtask(name, description, epicId);
-                subtask.setId(id);
-                subtask.setStatus(status);
-                return subtask;
+                task = new Subtask(name, description, epicId);
             }
             default -> throw new IllegalArgumentException("Неизвестный тип: " + type);
         }
+        task.setId(id);
+        task.setStatus(status);
+        task.setStartTime(startTime);
+        task.setDuration(duration);
+
+        return task;
     }
 }
