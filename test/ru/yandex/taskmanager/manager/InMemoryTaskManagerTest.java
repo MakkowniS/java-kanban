@@ -203,10 +203,30 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldUpdateEpicStatus(){
+    void shouldUpdateEpicStatusDependsOnSubtasks(){
         Subtask subtask3 = new  Subtask("Test NewSubtask", "Test NewSubtask description", epic.getId());
         taskManager.createSubtask(subtask3);
 
+        assertEquals(StatusOfTask.NEW, taskManager.getEpic(subtask3.getEpicId()).getStatus(), "Изначальный статус эпика должен быть NEW");
+
+        subtask.setStatus(StatusOfTask.DONE);
+        subtask3.setStatus(StatusOfTask.DONE);
+        taskManager.updateSubtask(subtask);
+        taskManager.updateSubtask(subtask3);
+
+        assertEquals(StatusOfTask.DONE, taskManager.getEpic(subtask3.getEpicId()).getStatus(), "Статус эпика не DONE");
+
+        subtask.setStatus(StatusOfTask.NEW);
+        taskManager.updateSubtask(subtask);
+
+        assertEquals(StatusOfTask.IN_PROGRESS, taskManager.getEpic(subtask3.getEpicId()).getStatus(), "Статус эпика не IN_PROGRESS");
+
+        subtask.setStatus(StatusOfTask.IN_PROGRESS);
+        subtask3.setStatus(StatusOfTask.IN_PROGRESS);
+        taskManager.updateSubtask(subtask);
+        taskManager.updateSubtask(subtask3);
+
+        assertEquals(StatusOfTask.IN_PROGRESS, taskManager.getEpic(subtask3.getEpicId()).getStatus(), "Статус эпика не IN_PROGRESS");
     }
 
     @Test
