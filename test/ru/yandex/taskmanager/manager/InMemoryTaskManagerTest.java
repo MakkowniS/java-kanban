@@ -136,7 +136,6 @@ class InMemoryTaskManagerTest {
         taskManager.clearAllSubtasks();
         assertEquals(0, epic.getSubtasksId().size(), "Эпики не очистились от подзадач.");
         assertEquals(0, epic2.getSubtasksId().size(), "Эпики не очистились от подзадач.");
-
     }
 
     @Test
@@ -201,6 +200,13 @@ class InMemoryTaskManagerTest {
         assertEquals(taskManager.getSubtask(subtask.getId()).getDescription(), newSubtask.getDescription(), "Описание подзадачи не обновилось.");
         assertEquals(taskManager.getSubtask(subtask.getId()).getStatus(), newSubtask.getStatus(), "Статус подзадачи не обновился.");
         assertEquals(StatusOfTask.DONE, taskManager.getEpic(newSubtask.getEpicId()).getStatus(), "Статус эпика не поменялся вслед за подзадачей.");
+    }
+
+    @Test
+    void shouldUpdateEpicStatus(){
+        Subtask subtask3 = new  Subtask("Test NewSubtask", "Test NewSubtask description", epic.getId());
+        taskManager.createSubtask(subtask3);
+
     }
 
     @Test
