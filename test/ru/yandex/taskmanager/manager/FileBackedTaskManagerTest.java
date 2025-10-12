@@ -8,6 +8,7 @@ import ru.yandex.taskmanager.tasks.Task;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,10 +44,12 @@ class FileBackedTaskManagerTest {
     @Test
     void shouldSaveAndLoadTasks() {
         task = new Task("Task1", "Description1");
+        task.setDuration(Duration.ofMinutes(20));
         manager.createTask(task);
         epic = new Epic("Epic1", "Description1");
         manager.createEpic(epic);
         subtask = new Subtask("Subtask1", "Description1", epic.getId());
+        subtask.setDuration(Duration.ofMinutes(30));
         manager.createSubtask(subtask);
 
         FileBackedTaskManager loaded = FileBackedTaskManager.loadFromFile(file);

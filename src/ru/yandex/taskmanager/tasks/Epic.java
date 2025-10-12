@@ -8,8 +8,6 @@ import java.util.List;
 public class Epic extends Task {
 
     private final ArrayList<Integer> subtasksId;
-    private LocalDateTime startTime;
-    private Duration duration;
     private LocalDateTime endTime;
 
     public Epic(String name, String description) {
@@ -20,8 +18,6 @@ public class Epic extends Task {
     public Epic(Epic otherEpic) {
         super(otherEpic);
         this.subtasksId = new ArrayList<>(otherEpic.subtasksId);
-        this.startTime = otherEpic.startTime;
-        this.duration = otherEpic.duration;
         this.endTime = otherEpic.endTime;
     }
 
@@ -45,8 +41,8 @@ public class Epic extends Task {
 
     public void updateEpicTimeFields(List<Subtask> subtasks) {
         if (subtasksId.isEmpty()) {
-            this.duration = Duration.ZERO;
-            this.startTime = null;
+            setDuration(Duration.ZERO);
+            setStartTime(null);
             this.endTime = null;
             return;
         }
@@ -56,27 +52,25 @@ public class Epic extends Task {
         LocalDateTime lastEndTime = null;
 
         for (Subtask subtask : subtasks) {
-            if (!subtasksId.contains(subtask.getId())) { return; }
+            if (!subtasksId.contains(subtask.getId())) { continue; }
 
-            if (subtask.getDuration() != null) { // Суммирование продолжительности подзадач
+            if (subtask.getDuration() != Duration.ZERO) { // Суммирование продолжительности подзадач
                 durationSum = durationSum.plus(subtask.getDuration());
             }
 
             LocalDateTime subtaskStartTime = subtask.getStartTime(); // Поиск самого раннего начала подзадачи
-            if (subtaskStartTime == null || subtaskStartTime.isBefore(subtask.getStartTime())) {
+            if (firstStartTime == null || subtaskStartTime.isBefore(firstStartTime)) {
                 firstStartTime = subtaskStartTime;
             }
 
-            LocalDateTime subtaskEndTime = subtask.getEndTime(); // Поиск самого позднего конча подзадачи
-            if  (subtaskEndTime == null || subtaskEndTime.isAfter(subtask.getEndTime())) {
+            LocalDateTime subtaskEndTime = subtask.getEndTime(); // Поиск самого позднего конца подзадачи
+            if  (lastEndTime == null || subtaskEndTime.isAfter(lastEndTime)) {
                 lastEndTime = subtaskEndTime;
             }
-
-            this.duration = durationSum;
-            this.startTime = firstStartTime;
-            this.endTime = lastEndTime;
         }
-
+        setDuration(durationSum);
+        setStartTime(firstStartTime);
+        this.endTime = lastEndTime;
     }
 
     @Override
