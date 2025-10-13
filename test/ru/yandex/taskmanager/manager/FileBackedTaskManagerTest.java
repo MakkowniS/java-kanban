@@ -2,30 +2,36 @@ package ru.yandex.taskmanager.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.taskmanager.tasks.Epic;
-import ru.yandex.taskmanager.tasks.Subtask;
-import ru.yandex.taskmanager.tasks.Task;
-
+import ru.yandex.taskmanager.exceptions.ManagerSaveException;
+import ru.yandex.taskmanager.tasks.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
 
-    FileBackedTaskManager manager;
     File file;
+    FileBackedTaskManager manager;
     Task task;
     Epic epic;
     Subtask subtask;
 
+    @Override
+    protected FileBackedTaskManager createTaskManager() {
+        try{
+            file = File.createTempFile("tasks", ".csv");
+            file.deleteOnExit();
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        return new FileBackedTaskManager(file);
+    }
+
     @BeforeEach
     void setUp() throws IOException {
-        file = File.createTempFile("tasks", ".csv");
-        file.deleteOnExit();
-        manager = new FileBackedTaskManager(file);
-
+        manager = createTaskManager();
     }
 
     @Test
@@ -49,6 +55,7 @@ class FileBackedTaskManagerTest {
         epic = new Epic("Epic1", "Description1");
         manager.createEpic(epic);
         subtask = new Subtask("Subtask1", "Description1", epic.getId());
+        subtask.setStartTime(task.getStartTime().plusMinutes(20));
         subtask.setDuration(Duration.ofMinutes(30));
         manager.createSubtask(subtask);
 
@@ -58,4 +65,46 @@ class FileBackedTaskManagerTest {
         assertEquals(manager.getSubtasks(), loaded.getSubtasks());
         assertEquals(manager.getEpics(), loaded.getEpics());
     }
+
+    @Test
+    void shouldThrowExceptionIfNotExistingFile(){
+        File fakefile = new File("fake.csv");
+
+        assertThrows(ManagerSaveException.class, () ->
+            FileBackedTaskManager.loadFromFile(fakefile)
+                , "При попытке загрузки несуществующего файла ожидается исключение");
+    }
+
+    @Test
+    void shouldNotThrowExceptionIsFileExists(){
+        assertDoesNotThrow(() ->{
+            File file = File.createTempFile("tasks", ".csv");
+            FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        }, "Создание FileBackedManager с нормальным файлом не должно выбрасывать исключение");
+    }
+
+    @Test
+    void shouldNotThrowWhenSavingToAccessibleFile() throws IOException {
+        File file = File.createTempFile("tasks", ".csv");
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+
+        Task task = new Task("Test Task", "Desc");
+        manager.createTask(task);
+
+        assertDoesNotThrow(manager::save, "Сохранение в доступный файл не должно кидать исключений");
+    }
+
+    @Test
+    void shouldThrowWhenFileIsNotWritable() {
+        File readOnlyFile = new File("/root/protected.csv");
+        FileBackedTaskManager manager = new FileBackedTaskManager(readOnlyFile);
+
+        Task task = new Task("Task", "Desc");
+
+        assertThrows(ManagerSaveException.class, () ->
+            manager.createTask(task), "Ожидается исключение при записи в недоступный файл");
+    }
+
+
+
 }

@@ -25,7 +25,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void createTask(Task task) {
         if (task != null) {
             task.setId(idCounter++);
-            task.setStartTimeNow();
+            if (task.getStartTime() == null) {
+                task.setStartTimeNow();
+            }
             if (isIntersection(task)) {
                 throw new IllegalArgumentException("Задача пересекается во времени");
             }
@@ -127,7 +129,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void createSubtask(Subtask subtask) {
         if (subtask != null && epics.containsKey(subtask.getEpicId())) {
             subtask.setId(idCounter++);
-            subtask.setStartTimeNow(); // Выставляем время начала подзадачи
+            if (subtask.getStartTime() == null) { // Выставляем время начала подзадачи
+                subtask.setStartTimeNow();
+            }
             if (isIntersection(subtask)) {
                 throw new IllegalArgumentException("Задача пересекается во времени");
             }
@@ -195,7 +199,7 @@ public class InMemoryTaskManager implements TaskManager {
     /// Пересечения
 
     private boolean isOverlap(Task task1, Task task2) { // Проверка наложения отрезков
-        return task1.getStartTime().isEqual(task2.getEndTime()) &&
+        return task1.getStartTime().isBefore(task2.getEndTime()) &&
                 task2.getStartTime().isBefore(task1.getEndTime());
     }
 
