@@ -52,7 +52,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveTaskFromBeginning(){
+    void shouldRemoveTaskFromBeginning() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -62,7 +62,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveTaskFromCenter(){
+    void shouldRemoveTaskFromCenter() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -72,7 +72,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveTaskFromEnd(){
+    void shouldRemoveTaskFromEnd() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -82,12 +82,12 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldReturnEmptyHistory(){
+    void shouldReturnEmptyHistory() {
         assertTrue(historyManager.getHistory().isEmpty(), "История должна быть пустой. если задачи не добавлены.");
     }
 
     @Test
-    void shouldDeleteDuplicates(){
+    void shouldDeleteDuplicates() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task1);

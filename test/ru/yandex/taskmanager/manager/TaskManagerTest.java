@@ -3,6 +3,7 @@ package ru.yandex.taskmanager.manager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.taskmanager.tasks.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -38,31 +39,31 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldAddAndGetTasks(){
+    void shouldAddAndGetTasks() {
         assertEquals(2, taskManager.getTasks().size(), "Кол-во задач должно быть равно 2.");
         assertEquals(task, taskManager.getTask(task.getId()), "Задача не возвращается из менеджера.");
     }
 
     @Test
-    void shouldAddAndGetEpics(){
+    void shouldAddAndGetEpics() {
         assertEquals(2, taskManager.getEpics().size());
         assertEquals(epic, taskManager.getEpic(epic.getId()));
     }
 
     @Test
-    void shouldAddAndGetSubtasks(){
+    void shouldAddAndGetSubtasks() {
         assertEquals(2, taskManager.getSubtasks().size());
         assertEquals(subtask, taskManager.getSubtask(subtask.getId()));
     }
 
     @Test
-    void shouldRemoveTask(){
+    void shouldRemoveTask() {
         taskManager.removeTask(task.getId());
         assertNull(taskManager.getTask(task.getId()), "Задача не удалена.");
     }
 
     @Test
-    void shouldRemoveEpicsWithSubtasks(){
+    void shouldRemoveEpicsWithSubtasks() {
         taskManager.removeEpic(epic.getId());
         assertNull(taskManager.getEpic(epic.getId()), "Эпик не удалён.");
         assertNull(taskManager.getSubtask(subtask.getId()), "Подзадачи эпика не удалены.");
@@ -76,7 +77,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void clearAllSubtasksShouldClearAllEpicsSubtasksLists(){
+    void clearAllSubtasksShouldClearAllEpicsSubtasksLists() {
         assertNotNull(epic.getSubtasksId(), "В Эпике нет записанных подзадач.");
         assertNotNull(epic2.getSubtasksId(), "В Эпике нет записанных подзадач.");
         taskManager.clearAllSubtasks();
@@ -155,12 +156,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void editingReturnedTaskFromListChangesStoredTask(){
+    void editingReturnedTaskFromListChangesStoredTask() {
         Task returnedTask = taskManager.getTask(task.getId());
         returnedTask.setName("New Name Task");
 
-        assertEquals("New Name Task", taskManager.getTask(task.getId()).getName(), "Изменение" +
-                "возвращаемого объекта должно повлиять на объект внутри менеджера.");
+        assertEquals("New Name Task", taskManager.getTask(task.getId()).getName(), "Изменение" + "возвращаемого объекта должно повлиять на объект внутри менеджера.");
     }
 
     @Test

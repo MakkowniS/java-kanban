@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.TreeSet;
 
-class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager>{
+class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     private TaskManager taskManager;
 
@@ -20,7 +20,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager>{
     }
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         taskManager = createTaskManager();
     }
 

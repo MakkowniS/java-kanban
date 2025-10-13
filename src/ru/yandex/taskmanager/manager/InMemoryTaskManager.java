@@ -43,8 +43,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void clearAllTasks() {
-        tasks.keySet().stream()
-                .forEach(historyManager::remove);
+        tasks.keySet().stream().forEach(historyManager::remove);
         tasks.clear();
     }
 
@@ -88,7 +87,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void clearAllEpics() {
-        Stream.concat(epics.keySet().stream(),  subtasks.keySet().stream()) // Объединяем стримы ключей
+        Stream.concat(epics.keySet().stream(), subtasks.keySet().stream()) // Объединяем стримы ключей
                 .forEach(historyManager::remove);
         epics.clear();
         subtasks.clear(); // Т.к. подзадачи - часть эпиков, удаляются и они
@@ -154,12 +153,11 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.keySet().stream() // Очищаем историю
                 .forEach(historyManager::remove);
         subtasks.clear();
-        epics.values().stream()
-                .forEach(epic -> {
-                    epic.clearAllSubtasksId();
-                    updateEpicTime(epic.getId());
-                    updateEpicStatus(epic.getId());
-                });
+        epics.values().stream().forEach(epic -> {
+            epic.clearAllSubtasksId();
+            updateEpicTime(epic.getId());
+            updateEpicStatus(epic.getId());
+        });
     }
 
     @Override
@@ -199,24 +197,19 @@ public class InMemoryTaskManager implements TaskManager {
     /// Пересечения
 
     private boolean isOverlap(Task task1, Task task2) { // Проверка наложения отрезков
-        return task1.getStartTime().isBefore(task2.getEndTime()) &&
-                task2.getStartTime().isBefore(task1.getEndTime());
+        return task1.getStartTime().isBefore(task2.getEndTime()) && task2.getStartTime().isBefore(task1.getEndTime());
     }
 
-    private boolean isIntersection(Task task){
-        return getPrioritizedTasks().stream()
-                .filter(existingTask -> existingTask.getStartTime() != null && existingTask.getEndTime() != null) // Фильтрация null
+    private boolean isIntersection(Task task) {
+        return getPrioritizedTasks().stream().filter(existingTask -> existingTask.getStartTime() != null && existingTask.getEndTime() != null) // Фильтрация null
                 .anyMatch(existingTask -> isOverlap(existingTask, task)); // Поиск наложения
     }
 
     /// ///
     @Override
     public TreeSet<Task> getPrioritizedTasks() {
-        TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator
-                .comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
-        Stream.concat(tasks.values().stream(), subtasks.values().stream())
-                .filter(task -> task.getStartTime() != null && task.getEndTime() != null)
-                .forEach(prioritizedTasks::add);
+        TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
+        Stream.concat(tasks.values().stream(), subtasks.values().stream()).filter(task -> task.getStartTime() != null && task.getEndTime() != null).forEach(prioritizedTasks::add);
 
         return prioritizedTasks;
     }
@@ -227,9 +220,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicsSubtasksIds.isEmpty()) {
             return new ArrayList<>();
         }
-        return epicsSubtasksIds.stream()
-                .map(id -> subtasks.get(id))
-                .collect(Collectors.toList());
+        return epicsSubtasksIds.stream().map(id -> subtasks.get(id)).collect(Collectors.toList());
     }
 
     private void updateEpicTime(int epicId) {
@@ -248,10 +239,8 @@ public class InMemoryTaskManager implements TaskManager {
                 return;
             }
 
-            boolean allDone = subtasksByEpic.stream()
-                    .allMatch(subtask -> subtask.getStatus() == StatusOfTask.DONE);
-            boolean allNew = subtasksByEpic.stream()
-                    .allMatch(subtask -> subtask.getStatus() == StatusOfTask.NEW);
+            boolean allDone = subtasksByEpic.stream().allMatch(subtask -> subtask.getStatus() == StatusOfTask.DONE);
+            boolean allNew = subtasksByEpic.stream().allMatch(subtask -> subtask.getStatus() == StatusOfTask.NEW);
 
             if (allDone) {
                 epic.setStatus(StatusOfTask.DONE);

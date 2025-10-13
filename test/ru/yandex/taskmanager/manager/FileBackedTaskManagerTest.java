@@ -4,13 +4,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.taskmanager.exceptions.ManagerSaveException;
 import ru.yandex.taskmanager.tasks.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     File file;
     FileBackedTaskManager manager;
@@ -20,10 +21,10 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
 
     @Override
     protected FileBackedTaskManager createTaskManager() {
-        try{
+        try {
             file = File.createTempFile("tasks", ".csv");
             file.deleteOnExit();
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return new FileBackedTaskManager(file);
@@ -67,17 +68,15 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
     }
 
     @Test
-    void shouldThrowExceptionIfNotExistingFile(){
+    void shouldThrowExceptionIfNotExistingFile() {
         File fakefile = new File("fake.csv");
 
-        assertThrows(ManagerSaveException.class, () ->
-            FileBackedTaskManager.loadFromFile(fakefile)
-                , "При попытке загрузки несуществующего файла ожидается исключение");
+        assertThrows(ManagerSaveException.class, () -> FileBackedTaskManager.loadFromFile(fakefile), "При попытке загрузки несуществующего файла ожидается исключение");
     }
 
     @Test
-    void shouldNotThrowExceptionIsFileExists(){
-        assertDoesNotThrow(() ->{
+    void shouldNotThrowExceptionIsFileExists() {
+        assertDoesNotThrow(() -> {
             File file = File.createTempFile("tasks", ".csv");
             FileBackedTaskManager manager = new FileBackedTaskManager(file);
         }, "Создание FileBackedManager с нормальным файлом не должно выбрасывать исключение");
@@ -101,10 +100,8 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
 
         Task task = new Task("Task", "Desc");
 
-        assertThrows(ManagerSaveException.class, () ->
-            manager.createTask(task), "Ожидается исключение при записи в недоступный файл");
+        assertThrows(ManagerSaveException.class, () -> manager.createTask(task), "Ожидается исключение при записи в недоступный файл");
     }
-
 
 
 }

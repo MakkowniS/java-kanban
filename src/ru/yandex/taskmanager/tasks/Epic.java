@@ -52,7 +52,9 @@ public class Epic extends Task {
         LocalDateTime lastEndTime = null;
 
         for (Subtask subtask : subtasks) {
-            if (!subtasksId.contains(subtask.getId())) { continue; }
+            if (!subtasksId.contains(subtask.getId())) {
+                continue;
+            }
 
             if (subtask.getDuration() != Duration.ZERO) { // Суммирование продолжительности подзадач
                 durationSum = durationSum.plus(subtask.getDuration());
@@ -64,7 +66,7 @@ public class Epic extends Task {
             }
 
             LocalDateTime subtaskEndTime = subtask.getEndTime(); // Поиск самого позднего конца подзадачи
-            if  (lastEndTime == null || subtaskEndTime.isAfter(lastEndTime)) {
+            if (lastEndTime == null || subtaskEndTime.isAfter(lastEndTime)) {
                 lastEndTime = subtaskEndTime;
             }
         }
@@ -85,12 +87,6 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "ru.yandex.taskmanager.tasks.Epic{" +
-                "name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", id=" + getId() + '\'' +
-                ", status=" + getStatus() +
-                ", subtasksId=" + subtasksId +
-                '}';
+        return "ru.yandex.taskmanager.tasks.Epic{" + "name='" + getName() + '\'' + ", description='" + getDescription() + '\'' + ", id=" + getId() + '\'' + ", status=" + getStatus() + ", subtasksId=" + subtasksId + '}';
     }
 }
