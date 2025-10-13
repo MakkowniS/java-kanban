@@ -17,8 +17,8 @@ public class TaskStringTransform {
             epicId = String.valueOf(((Subtask) task).getEpicId());
         }
 
-        return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() +
-                ","+ task.getStartTime() + "," + task.getDuration().toMinutes() + "," + epicId;
+        return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," +
+                task.getDescription() + "," + task.getStartTime() + "," + task.getDuration().toMinutes() + "," + epicId;
     }
 
     public static Task fromString(String str) {
