@@ -2,8 +2,12 @@ package ru.yandex.taskmanager.manager;
 
 import ru.yandex.taskmanager.tasks.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.TreeSet;
+import java.util.Comparator;
 
-import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,6 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Subtask> subtasks = new HashMap<>(); // Таблица Подзадач
     protected int idCounter = 1; // Сквозной счётчик id
     private final HistoryManager historyManager = Managers.getDefaultHistory();
+    TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     /// /// Блок обычных задач
 
@@ -25,12 +30,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void createTask(Task task) {
         if (task != null) {
             task.setId(idCounter++);
-            if (task.getStartTime() == null) {
-                task.setStartTimeNow();
-            }
-            if (isIntersection(task)) {
-                throw new IllegalArgumentException("Задача пересекается во времени");
-            }
+            checkAndAddToPrioritized(task);
             tasks.put(task.getId(), task);
         }
     }
@@ -43,16 +43,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void clearAllTasks() {
-        tasks.keySet().stream().forEach(historyManager::remove);
+        tasks.keySet().stream()
+                .forEach(historyManager::remove);
+        prioritizedTasks.removeIf(task -> task.getType() == TypeOfTask.TASK);
         tasks.clear();
     }
 
     @Override
     public void updateTask(Task updatedTask) {
         if (tasks.containsKey(updatedTask.getId())) {
-            if (isIntersection(updatedTask)) {
-                throw new IllegalArgumentException("Задача пересекается во времени");
-            }
+            checkAndAddToPrioritized(updatedTask);
             tasks.put(updatedTask.getId(), updatedTask);
         }
     }
@@ -61,6 +61,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeTask(int id) {
         tasks.remove(id);
         historyManager.remove(id);
+        prioritizedTasks.remove(tasks.get(id));
     }
 
     /// ///
@@ -89,6 +90,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void clearAllEpics() {
         Stream.concat(epics.keySet().stream(), subtasks.keySet().stream()) // Объединяем стримы ключей
                 .forEach(historyManager::remove);
+        prioritizedTasks.removeIf(subtask -> subtask.getType() == TypeOfTask.SUBTASK); // Удаляем подзадачи из отсортированного списка
         epics.clear();
         subtasks.clear(); // Т.к. подзадачи - часть эпиков, удаляются и они
     }
@@ -110,6 +112,7 @@ public class InMemoryTaskManager implements TaskManager {
                     .forEach(subtaskId -> {
                         subtasks.remove(subtaskId);
                         historyManager.remove(subtaskId);
+                        prioritizedTasks.remove(subtasks.get(subtaskId));
                     });
             epics.remove(id);
             historyManager.remove(id);
@@ -128,12 +131,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void createSubtask(Subtask subtask) {
         if (subtask != null && epics.containsKey(subtask.getEpicId())) {
             subtask.setId(idCounter++);
-            if (subtask.getStartTime() == null) { // Выставляем время начала подзадачи
-                subtask.setStartTimeNow();
-            }
-            if (isIntersection(subtask)) {
-                throw new IllegalArgumentException("Задача пересекается во времени");
-            }
+            checkAndAddToPrioritized(subtask);
             subtasks.put(subtask.getId(), subtask);
             Epic epic = epics.get(subtask.getEpicId()); // Добавление подзадачи в список к эпику
             epic.addSubtaskId(subtask.getId());
@@ -152,6 +150,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void clearAllSubtasks() {
         subtasks.keySet().stream() // Очищаем историю
                 .forEach(historyManager::remove);
+        prioritizedTasks.removeIf(task -> task.getType() == TypeOfTask.SUBTASK);
         subtasks.clear();
         epics.values().stream().forEach(epic -> {
             epic.clearAllSubtasksId();
@@ -163,11 +162,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask updatedSubtask) {
         if (subtasks.containsKey(updatedSubtask.getId())) {
-            if (isIntersection(updatedSubtask)) {
-                throw new IllegalArgumentException("Задача пересекается во времени");
-            }
+            checkAndAddToPrioritized(updatedSubtask);
             subtasks.put(updatedSubtask.getId(), updatedSubtask);
         }
+        updateEpicTime(updatedSubtask.getEpicId());
         updateEpicStatus(updatedSubtask.getEpicId());
     }
 
@@ -177,6 +175,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(id)) {
             subtasks.remove(id);
             historyManager.remove(id);
+            prioritizedTasks.remove(subtasks.get(id));
             Epic epic = epics.get(epicId);
             epic.removeSubtaskId(id);
         }
@@ -206,12 +205,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /// ///
-    @Override
-    public TreeSet<Task> getPrioritizedTasks() {
-        TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
-        Stream.concat(tasks.values().stream(), subtasks.values().stream()).filter(task -> task.getStartTime() != null && task.getEndTime() != null).forEach(prioritizedTasks::add);
 
-        return prioritizedTasks;
+    private void checkAndAddToPrioritized(Task task) {
+        if (task.getStartTime() != null) {
+            if (isIntersection(task)) {
+                throw new IllegalArgumentException("Задача пересекается во времени");
+            }
+            prioritizedTasks.add(task);
+        }
+    }
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
     }
 
     @Override
@@ -220,7 +226,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicsSubtasksIds.isEmpty()) {
             return new ArrayList<>();
         }
-        return epicsSubtasksIds.stream().map(id -> subtasks.get(id)).collect(Collectors.toList());
+        return epicsSubtasksIds.stream().map(subtasks::get).collect(Collectors.toList());
     }
 
     private void updateEpicTime(int epicId) {

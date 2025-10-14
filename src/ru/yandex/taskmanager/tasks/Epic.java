@@ -48,31 +48,34 @@ public class Epic extends Task {
         }
 
         Duration durationSum = Duration.ZERO;
-        LocalDateTime firstStartTime = null;
-        LocalDateTime lastEndTime = null;
+        LocalDateTime firstStartTime = LocalDateTime.MAX;
+        LocalDateTime lastEndTime = LocalDateTime.MIN;
 
         for (Subtask subtask : subtasks) {
             if (!subtasksId.contains(subtask.getId())) {
                 continue;
             }
-
             if (subtask.getDuration() != Duration.ZERO) { // Суммирование продолжительности подзадач
                 durationSum = durationSum.plus(subtask.getDuration());
             }
-
-            LocalDateTime subtaskStartTime = subtask.getStartTime(); // Поиск самого раннего начала подзадачи
-            if (firstStartTime == null || subtaskStartTime.isBefore(firstStartTime)) {
+            LocalDateTime subtaskStartTime = subtask.getStartTime();
+            LocalDateTime subtaskEndTime = subtask.getEndTime();
+            if (subtaskStartTime != null && subtaskStartTime.isBefore(firstStartTime)) {
                 firstStartTime = subtaskStartTime;
             }
-
-            LocalDateTime subtaskEndTime = subtask.getEndTime(); // Поиск самого позднего конца подзадачи
-            if (lastEndTime == null || subtaskEndTime.isAfter(lastEndTime)) {
+            if (subtaskEndTime != null && subtaskEndTime.isAfter(lastEndTime)) {
                 lastEndTime = subtaskEndTime;
             }
         }
         setDuration(durationSum);
-        setStartTime(firstStartTime);
-        this.endTime = lastEndTime;
+        // Дополнительная проверка, если у всех подзадач StartTime = null
+        setStartTime(firstStartTime == LocalDateTime.MAX ? null : firstStartTime);
+        this.endTime = lastEndTime == LocalDateTime.MAX ? null : lastEndTime;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     @Override

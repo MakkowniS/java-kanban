@@ -31,7 +31,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() {
         manager = createTaskManager();
     }
 
@@ -51,6 +51,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     @Test
     void shouldSaveAndLoadTasks() {
         task = new Task("Task1", "Description1");
+        task.setStartTimeNow();
         task.setDuration(Duration.ofMinutes(20));
         manager.createTask(task);
         epic = new Epic("Epic1", "Description1");
