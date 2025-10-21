@@ -15,9 +15,9 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>(); // Таблица Задач
     protected final HashMap<Integer, Epic> epics = new HashMap<>(); // Таблица Эпиков
     protected final HashMap<Integer, Subtask> subtasks = new HashMap<>(); // Таблица Подзадач
+    protected TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
     protected int idCounter = 1; // Сквозной счётчик id
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-    TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     /// /// Блок обычных задач
 
