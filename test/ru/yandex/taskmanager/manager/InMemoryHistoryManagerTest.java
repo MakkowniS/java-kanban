@@ -52,7 +52,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveTaskFromBeginning(){
+    void shouldRemoveTaskFromBeginning() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -62,7 +62,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveTaskFromCenter(){
+    void shouldRemoveTaskFromCenter() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -72,7 +72,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveTaskFromEnd(){
+    void shouldRemoveTaskFromEnd() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -81,4 +81,20 @@ class InMemoryHistoryManagerTest {
         assertEquals(List.of(task1, task2), historyManager.getHistory(), "Списки не совпадают.");
     }
 
+    @Test
+    void shouldReturnEmptyHistory() {
+        assertTrue(historyManager.getHistory().isEmpty(), "История должна быть пустой. если задачи не добавлены.");
+    }
+
+    @Test
+    void shouldDeleteDuplicates() {
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task1);
+
+        List<Task> history = historyManager.getHistory();
+
+        assertEquals(2, history.size(), "История не должна содержать дублей.");
+        assertEquals(task1, history.get(1), "task1 должна перейти в конец.");
+    }
 }

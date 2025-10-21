@@ -1,5 +1,8 @@
 package ru.yandex.taskmanager.tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 
 public class Task {
@@ -7,11 +10,14 @@ public class Task {
     private String description;
     private int id;
     private StatusOfTask status;
+    private Duration duration;
+    private LocalDateTime startTime;
 
     public Task(String name, String description) { // Конструктор для обычных задач и подзадач
         this.name = name;
         this.description = description;
         this.status = StatusOfTask.NEW;
+        this.duration = Duration.ZERO;
     }
 
     public Task(Task otherTask) { // Конструктор для копирования в историю
@@ -19,6 +25,8 @@ public class Task {
         this.description = otherTask.getDescription();
         this.id = otherTask.getId();
         this.status = otherTask.getStatus();
+        this.duration = otherTask.getDuration();
+        this.startTime = otherTask.getStartTime();
     }
 
     public String getName() {
@@ -57,6 +65,33 @@ public class Task {
         return TypeOfTask.TASK;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTimeNow() {
+        this.startTime = LocalDateTime.now(ZoneId.systemDefault());
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime != null) {
+            return startTime.plus(duration);
+        }
+        return LocalDateTime.MIN;
+    }
+
     public Task objectCopy() {
         return new Task(this);
     }
@@ -76,12 +111,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "ru.yandex.taskmanager.tasks.Task{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
-                '}';
+        return "ru.yandex.taskmanager.tasks.Task{" + "name='" + name + '\'' + ", description='" + description + '\'' + ", id=" + id + ", status=" + status + '}';
     }
-
 }

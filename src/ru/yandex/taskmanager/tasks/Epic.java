@@ -1,10 +1,14 @@
 package ru.yandex.taskmanager.tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
 
     private final ArrayList<Integer> subtasksId;
+    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
         super(name, description);
@@ -14,6 +18,7 @@ public class Epic extends Task {
     public Epic(Epic otherEpic) {
         super(otherEpic);
         this.subtasksId = new ArrayList<>(otherEpic.subtasksId);
+        this.endTime = otherEpic.endTime;
     }
 
     public ArrayList<Integer> getSubtasksId() {
@@ -34,6 +39,45 @@ public class Epic extends Task {
         subtasksId.clear();
     }
 
+    public void updateEpicTimeFields(List<Subtask> subtasks) {
+        if (subtasksId.isEmpty()) {
+            setDuration(Duration.ZERO);
+            setStartTime(null);
+            this.endTime = null;
+            return;
+        }
+
+        Duration durationSum = Duration.ZERO;
+        LocalDateTime firstStartTime = LocalDateTime.MAX;
+        LocalDateTime lastEndTime = LocalDateTime.MIN;
+
+        for (Subtask subtask : subtasks) {
+            if (!subtasksId.contains(subtask.getId())) {
+                continue;
+            }
+            if (subtask.getDuration() != Duration.ZERO) { // Суммирование продолжительности подзадач
+                durationSum = durationSum.plus(subtask.getDuration());
+            }
+            LocalDateTime subtaskStartTime = subtask.getStartTime();
+            LocalDateTime subtaskEndTime = subtask.getEndTime();
+            if (subtaskStartTime != null && subtaskStartTime.isBefore(firstStartTime)) {
+                firstStartTime = subtaskStartTime;
+            }
+            if (subtaskEndTime != null && subtaskEndTime.isAfter(lastEndTime)) {
+                lastEndTime = subtaskEndTime;
+            }
+        }
+        setDuration(durationSum);
+        // Дополнительная проверка, если у всех подзадач StartTime = null
+        setStartTime(firstStartTime == LocalDateTime.MAX ? null : firstStartTime);
+        this.endTime = lastEndTime == LocalDateTime.MAX ? null : lastEndTime;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
     @Override
     public TypeOfTask getType() {
         return TypeOfTask.EPIC;
@@ -46,12 +90,6 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "ru.yandex.taskmanager.tasks.Epic{" +
-                "name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", id=" + getId() + '\'' +
-                ", status=" + getStatus() +
-                ", subtasksId=" + subtasksId +
-                '}';
+        return "ru.yandex.taskmanager.tasks.Epic{" + "name='" + getName() + '\'' + ", description='" + getDescription() + '\'' + ", id=" + getId() + '\'' + ", status=" + getStatus() + ", subtasksId=" + subtasksId + '}';
     }
 }
