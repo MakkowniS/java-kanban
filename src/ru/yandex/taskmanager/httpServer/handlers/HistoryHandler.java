@@ -25,7 +25,7 @@ public class HistoryHandler extends BaseHttpHandler {
             String json = gson.toJson(tasks);
 
             sendResponse(exchange, json, 200);
-        } catch (Exception e){
+        } catch (Exception e) {
             sendInternalServerError(exchange);
         }
     }

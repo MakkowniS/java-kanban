@@ -26,7 +26,7 @@ public class PrioritizedHandler extends BaseHttpHandler {
             String json = gson.toJson(prioritizedTasks);
 
             sendResponse(exchange, json, 200);
-        } catch (Exception e){
+        } catch (Exception e) {
             sendInternalServerError(exchange);
         }
     }

@@ -71,9 +71,9 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
 
     @Override
     protected void handleDeleteRequest(HttpExchange exchange) throws IOException {
-        String[]  pathParts = exchange.getRequestURI().getPath().split("/");
+        String[] pathParts = exchange.getRequestURI().getPath().split("/");
 
-        if  (pathParts.length == 3) {
+        if (pathParts.length == 3) {
             int id = Integer.parseInt(pathParts[2]);
             manager.removeSubtask(id);
             sendResponse(exchange, "Подзадача успешно удалена.", 200);

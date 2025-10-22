@@ -74,7 +74,7 @@ public class EpicHandler extends BaseHttpHandler {
     @Override
     protected void handleDeleteRequest(HttpExchange exchange) throws IOException {
         try {
-            String[]  pathParts = exchange.getRequestURI().getPath().split("/");
+            String[] pathParts = exchange.getRequestURI().getPath().split("/");
 
             if (pathParts.length == 3) {
                 int id = Integer.parseInt(pathParts[2]);
@@ -84,7 +84,7 @@ public class EpicHandler extends BaseHttpHandler {
                 sendResponse(exchange, "Неверный запрос для данного метода.", 400);
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             sendInternalServerError(exchange);
         }
     }

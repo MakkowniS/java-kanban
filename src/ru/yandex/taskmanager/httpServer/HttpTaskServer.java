@@ -33,7 +33,8 @@ public class HttpTaskServer {
         httpServer.start();
         System.out.println("Server started on port " + serverPort);
     }
+
     public static void main(String[] args) throws IOException {
-        new  HttpTaskServer().startServer();
+        new HttpTaskServer().startServer();
     }
 }

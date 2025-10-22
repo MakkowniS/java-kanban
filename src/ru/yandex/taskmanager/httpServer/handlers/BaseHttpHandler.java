@@ -22,10 +22,12 @@ public abstract class BaseHttpHandler implements HttpHandler {
     }
 
     protected abstract void handleGetRequest(HttpExchange exchange) throws IOException;
+
     protected abstract void handlePostRequest(HttpExchange exchange) throws IOException;
+
     protected abstract void handleDeleteRequest(HttpExchange exchange) throws IOException;
 
-    protected void sendResponse(HttpExchange exchange, String responseString , int responseCode ) throws IOException {
+    protected void sendResponse(HttpExchange exchange, String responseString, int responseCode) throws IOException {
         byte[] bytes = responseString.getBytes(StandardCharsets.UTF_8);
         try (OutputStream os = exchange.getResponseBody()) {
             exchange.sendResponseHeaders(responseCode, bytes.length);
