@@ -28,14 +28,14 @@ public class TaskHandler extends BaseHttpHandler {
 
             if (parts.length == 3) {
                 int id = Integer.parseInt(parts[2]);
-                System.out.println("→ Пытаюсь получить задачу с id=" + id);
                 Task task = manager.getTask(id);
-                System.out.println("← Получена задача: " + task);
+                System.out.println("Задача получена");
 
                 String responseString = gson.toJson(task);
                 sendResponse(exchange, responseString, 200);
             } else {
                 List<Task> tasks = manager.getTasks();
+                System.out.println("Задачи получены");
                 String jsonResponse = gson.toJson(tasks);
                 sendResponse(exchange, jsonResponse, 200);
             }
@@ -56,15 +56,20 @@ public class TaskHandler extends BaseHttpHandler {
             }
 
             Task task = gson.fromJson(requestBody, Task.class);
+            System.out.println("Задача получена.");
             if (task.getId() != 0) {
                 manager.updateTask(task);
+                System.out.println("Задача успешно обновлена.");
                 sendResponse(exchange, "Задача успешно обновлена.", 200);
             } else {
                 manager.createTask(task);
+                System.out.println("Задача успешно создана.");
                 sendResponse(exchange, "Задача успешно создана.", 201);
             }
         } catch (IllegalArgumentException e) {
             sendHasIntersection(exchange);
+        } catch (NotFoundException e) {
+            sendNotFound(exchange);
         } catch (IOException e) {
             sendInternalServerError(exchange);
         }
@@ -76,6 +81,7 @@ public class TaskHandler extends BaseHttpHandler {
         if (parts.length == 3) {
             int id = Integer.parseInt(parts[2]);
             manager.removeTask(id);
+            System.out.println("Задача удалена.");
             sendResponse(exchange, "Задача успешно удалена.", 200);
         } else {
             sendResponse(exchange, "Неверный запрос для данного метода.", 400);

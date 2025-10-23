@@ -27,11 +27,13 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
             if (pathParts.length == 3) {
                 int id = Integer.parseInt(pathParts[2]);
                 Subtask subtask = manager.getSubtask(id);
+                System.out.println("Задача получена.");
 
                 String json = gson.toJson(subtask);
                 sendResponse(exchange, json, 200);
             } else {
                 List<Subtask> subtasks = manager.getSubtasks();
+                System.out.println("Список задач получен");
 
                 String json = gson.toJson(subtasks);
                 sendResponse(exchange, json, 200);
@@ -52,12 +54,15 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                 return;
             }
             Subtask subtask = gson.fromJson(requestBody, Subtask.class);
+            System.out.println("Подзадача получена.");
 
             if (subtask.getId() != 0) {
                 manager.updateSubtask(subtask);
+                System.out.println("Подзадача обновлена.");
                 sendResponse(exchange, "Подзадача успешно обновлена.", 200);
             } else {
                 manager.createSubtask(subtask);
+                System.out.println("Подзадача создана.");
                 sendResponse(exchange, "Подзадача успешно создана.", 201);
             }
         } catch (IllegalArgumentException e) {
@@ -76,6 +81,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
         if (pathParts.length == 3) {
             int id = Integer.parseInt(pathParts[2]);
             manager.removeSubtask(id);
+            System.out.println("Задача удалена.");
             sendResponse(exchange, "Подзадача успешно удалена.", 200);
         } else {
             sendResponse(exchange, "Неверный запрос для данного метода.", 400);

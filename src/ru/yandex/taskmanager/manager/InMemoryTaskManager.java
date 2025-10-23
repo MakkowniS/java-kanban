@@ -58,14 +58,16 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.containsKey(updatedTask.getId())) {
             checkAndAddToPrioritized(updatedTask);
             tasks.put(updatedTask.getId(), updatedTask);
+        } else {
+            throw new NotFoundException("Не найдена задача с id: " + updatedTask.getId());
         }
     }
 
     @Override
     public void removeTask(int id) {
+        prioritizedTasks.remove(tasks.get(id));
         tasks.remove(id);
         historyManager.remove(id);
-        prioritizedTasks.remove(tasks.get(id));
     }
 
     /// ///
@@ -178,18 +180,20 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(updatedSubtask.getId())) {
             checkAndAddToPrioritized(updatedSubtask);
             subtasks.put(updatedSubtask.getId(), updatedSubtask);
+            updateEpicTime(updatedSubtask.getEpicId());
+            updateEpicStatus(updatedSubtask.getEpicId());
+        } else {
+            throw new NotFoundException("Не найдена подзадача с id: " + updatedSubtask.getId());
         }
-        updateEpicTime(updatedSubtask.getEpicId());
-        updateEpicStatus(updatedSubtask.getEpicId());
     }
 
     @Override
     public void removeSubtask(int id) {
         int epicId = subtasks.get(id).getEpicId();
         if (subtasks.containsKey(id)) {
+            prioritizedTasks.remove(subtasks.get(id));
             subtasks.remove(id);
             historyManager.remove(id);
-            prioritizedTasks.remove(subtasks.get(id));
             Epic epic = epics.get(epicId);
             epic.removeSubtaskId(id);
         }
@@ -214,13 +218,15 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean isIntersection(Task task) {
-        return getPrioritizedTasks().stream().filter(existingTask -> existingTask.getStartTime() != null && existingTask.getEndTime() != null) // Фильтрация null
+        return getPrioritizedTasks().stream()
+                .filter(existingTask -> existingTask.getStartTime() != null && existingTask.getEndTime() != null) // Фильтрация null
                 .anyMatch(existingTask -> isOverlap(existingTask, task)); // Поиск наложения
     }
 
     /// ///
 
     private void checkAndAddToPrioritized(Task task) {
+        prioritizedTasks.removeIf(existingTask -> existingTask.getId() == task.getId());
         if (task.getStartTime() != null) {
             if (isIntersection(task)) {
                 throw new IllegalArgumentException("Задача пересекается во времени");
