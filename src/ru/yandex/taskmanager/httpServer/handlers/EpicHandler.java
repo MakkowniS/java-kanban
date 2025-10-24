@@ -28,17 +28,20 @@ public class EpicHandler extends BaseHttpHandler {
             if (pathParts.length == 3) {
                 int id = Integer.parseInt(pathParts[2]);
                 Epic epic = manager.getEpic(id);
+                System.out.println("Эпик получен.");
                 String json = gson.toJson(epic);
 
                 sendResponse(exchange, json, 200);
             } else if (pathParts.length == 4 && pathParts[3].equals("subtasks")) {
                 int id = Integer.parseInt(pathParts[2]);
                 List<Subtask> subtasks = manager.getSubtasksByEpicId(id);
+                System.out.println("Список подзадач эпика получен.");
                 String json = gson.toJson(subtasks);
 
                 sendResponse(exchange, json, 200);
             } else if (pathParts.length < 3) {
                 List<Epic> epics = manager.getEpics();
+                System.out.println("Список эпиков получен.");
                 String json = gson.toJson(epics);
 
                 sendResponse(exchange, json, 200);
@@ -62,10 +65,9 @@ public class EpicHandler extends BaseHttpHandler {
             }
             Epic epic = gson.fromJson(requestBody, Epic.class);
             manager.createEpic(epic);
+            System.out.println("Эпик создан.");
 
-            sendResponse(exchange, "Эпик успешно создан.", 200);
-        } catch (IllegalArgumentException e) {
-            sendHasIntersection(exchange);
+            sendResponse(exchange, "Эпик успешно создан.", 201);
         } catch (Exception e) {
             sendInternalServerError(exchange);
         }
@@ -79,6 +81,8 @@ public class EpicHandler extends BaseHttpHandler {
             if (pathParts.length == 3) {
                 int id = Integer.parseInt(pathParts[2]);
                 manager.removeEpic(id);
+                System.out.println("Эпик удалён.");
+
                 sendResponse(exchange, "Эпик успешно удалён.", 200);
             } else {
                 sendResponse(exchange, "Неверный запрос для данного метода.", 400);

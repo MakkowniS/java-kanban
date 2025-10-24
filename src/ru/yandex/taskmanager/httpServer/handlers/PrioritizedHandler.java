@@ -23,6 +23,7 @@ public class PrioritizedHandler extends BaseHttpHandler {
     protected void handleGetRequest(HttpExchange exchange) throws IOException {
         try {
             List<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+            System.out.println("Сортированный список получен");
             String json = gson.toJson(prioritizedTasks);
 
             sendResponse(exchange, json, 200);

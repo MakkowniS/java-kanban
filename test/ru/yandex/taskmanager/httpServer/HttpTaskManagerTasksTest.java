@@ -299,8 +299,8 @@ public class HttpTaskManagerTasksTest {
     // Обработчик Epic
     @Test
     public void testAddEpic() throws IOException, InterruptedException {
-        Epic epic = new Epic("New", "New Desc");
-        String epicJson = gson.toJson(epic);
+        Epic newEpic = new Epic("New", "New Desc");
+        String epicJson = gson.toJson(newEpic);
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/");
@@ -312,6 +312,158 @@ public class HttpTaskManagerTasksTest {
         assertEquals(201, response.statusCode());
 
         assertEquals(2, manager.getEpics().size(), "Количество эпиков некорректное.");
-        assertEquals(epic.getName(), manager.getEpics().get(1).getName(), "Имя эпика некорректное.");
+        assertEquals(newEpic.getName(), manager.getEpics().get(1).getName(), "Имя эпика некорректное.");
     }
+
+    @Test
+    public void testGetEpis() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/epics/");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        List<Epic> epicsFromServer = gson.fromJson(response.body(), GsonListTypes.EPICS_LIST);
+
+        assertNotNull(epicsFromServer, "Список не возвращается.");
+        assertEquals(manager.getEpics().getFirst(), epicsFromServer.getFirst(), "Наполнение списка некорректное." );
+    }
+
+    @Test
+    public void testGetEpic() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+        Epic epicFromServer = gson.fromJson(response.body(), Epic.class);
+
+        assertEquals(epic, epicFromServer, "Сервер вернул некорректный объект.");
+    }
+
+    @Test
+    public void testGetEpicsSubtasks() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/epics/" + epic.getId() + "/subtasks");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        List<Subtask> subtasksFromEpic = gson.fromJson(response.body(), GsonListTypes.SUBTASKS_LIST);
+
+        assertNotNull(subtasksFromEpic, "Список не возвращается.");
+        assertEquals(subtask, subtasksFromEpic.getFirst(), "Некорректная подзадача." );
+    }
+
+    @Test
+    public void testRemoveEpic() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .DELETE()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        assertThrows(NotFoundException.class, () -> manager.getEpic(epic.getId()));
+    }
+
+    @Test
+    public void shouldThrowNotFoundExceptionOnEpic() throws IOException, InterruptedException {
+        manager.removeEpic(epic.getId());
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(404, response.statusCode());
+
+        assertThrows(NotFoundException.class, () -> manager.getEpic(epic.getId()));
+    }
+
+    // Обработчик History
+    @Test
+    public void testGetHistory() throws IOException, InterruptedException {
+        manager.getTask(task.getId());
+        manager.getSubtask(subtask.getId());
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/history/");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        assertEquals(2, manager.getHistory().size(), "<UNK> <UNK> <UNK>.");
+        assertEquals(task, manager.getHistory().getFirst());
+    }
+
+    @Test
+    public void shouldSendStatus405IfHistoryMethodNotAllowed() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/history/");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .DELETE()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(405, response.statusCode());
+    }
+
+    // Обработчик Prioritized
+    @Test
+    public void testGetPrioritized() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/prioritized/");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        List<Task> listFromServer = gson.fromJson(response.body(), GsonListTypes.TASKS_LIST);
+        assertNotNull(listFromServer, "Список не возвращается.");
+
+        assertEquals(task, listFromServer.getFirst(), "Некорректная задача в списке.");
+    }
+
+    @Test
+    public void shouldSendStatus405IfPrioritizedMethodNotAllowed() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/prioritized/");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .DELETE()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(405, response.statusCode());
+    }
+
+
 }

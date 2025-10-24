@@ -22,6 +22,7 @@ public class HistoryHandler extends BaseHttpHandler {
     protected void handleGetRequest(HttpExchange exchange) throws IOException {
         try {
             List<Task> tasks = manager.getHistory();
+            System.out.println("История получена.");
             String json = gson.toJson(tasks);
 
             sendResponse(exchange, json, 200);

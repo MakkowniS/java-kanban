@@ -119,9 +119,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.containsKey(id)) {
             epics.get(id).getSubtasksId().stream() // Пробегая по списку, удаляем из хэшмапы подзадачи, которые там есть
                     .forEach(subtaskId -> {
+                        prioritizedTasks.remove(subtasks.get(subtaskId));
                         subtasks.remove(subtaskId);
                         historyManager.remove(subtaskId);
-                        prioritizedTasks.remove(subtasks.get(subtaskId));
                     });
             epics.remove(id);
             historyManager.remove(id);

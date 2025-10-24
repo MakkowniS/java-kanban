@@ -2,6 +2,7 @@ package ru.yandex.taskmanager.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.taskmanager.exceptions.NotFoundException;
 import ru.yandex.taskmanager.tasks.*;
 
 import java.time.Duration;
@@ -61,20 +62,20 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldRemoveTask() {
         taskManager.removeTask(task.getId());
-        assertNull(taskManager.getTask(task.getId()), "Задача не удалена.");
+        assertThrows(NotFoundException.class , () -> taskManager.getTask(task.getId()));
     }
 
     @Test
     void shouldRemoveEpicsWithSubtasks() {
         taskManager.removeEpic(epic.getId());
-        assertNull(taskManager.getEpic(epic.getId()), "Эпик не удалён.");
-        assertNull(taskManager.getSubtask(subtask.getId()), "Подзадачи эпика не удалены.");
+        assertThrows(NotFoundException.class , () -> taskManager.getEpic(epic.getId()));
+        assertThrows(NotFoundException.class , () -> taskManager.getSubtask(subtask.getId()));
     }
 
     @Test
     void shouldRemoveSubtask() {
         taskManager.removeSubtask(subtask.getId());
-        assertNull(taskManager.getSubtask(subtask.getId()), "Подзадача не удалена.");
+        assertThrows(NotFoundException.class , () -> taskManager.getSubtask(subtask.getId()));
         assertFalse(epic.getSubtasksId().contains(subtask.getId()), "Подзадача не удалилась из списка эпика.");
     }
 
@@ -202,7 +203,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void taskWithManualAndAutoIdShouldNotConflict() {
         task.setId(50);
 
-        assertNotEquals(taskManager.getTask(task.getId()), taskManager.getTask(task2.getId()), "Id должны быть уникальны");
+        assertNotEquals(taskManager.getTasks().getFirst(), taskManager.getTask(task2.getId()), "Id должны быть уникальны");
     }
 
     @Test
