@@ -238,7 +238,7 @@ public class HttpTaskManagerTasksTest {
     @Test
     public void testGetSubtask() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/subtasks/" +  subtask.getId());
+        URI url = URI.create("http://localhost:8080/subtasks/" + subtask.getId());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(url)
                 .GET()
@@ -330,7 +330,7 @@ public class HttpTaskManagerTasksTest {
         List<Epic> epicsFromServer = gson.fromJson(response.body(), GsonListTypes.EPICS_LIST);
 
         assertNotNull(epicsFromServer, "Список не возвращается.");
-        assertEquals(manager.getEpics().getFirst(), epicsFromServer.getFirst(), "Наполнение списка некорректное." );
+        assertEquals(manager.getEpics().getFirst(), epicsFromServer.getFirst(), "Наполнение списка некорректное.");
     }
 
     @Test
@@ -364,7 +364,7 @@ public class HttpTaskManagerTasksTest {
         List<Subtask> subtasksFromEpic = gson.fromJson(response.body(), GsonListTypes.SUBTASKS_LIST);
 
         assertNotNull(subtasksFromEpic, "Список не возвращается.");
-        assertEquals(subtask, subtasksFromEpic.getFirst(), "Некорректная подзадача." );
+        assertEquals(subtask, subtasksFromEpic.getFirst(), "Некорректная подзадача.");
     }
 
     @Test

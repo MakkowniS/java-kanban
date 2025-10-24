@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 
 public class GsonUtil {
 
-    private GsonUtil() {}
+    private GsonUtil() {
+    }
 
     public static Gson getGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -22,8 +23,7 @@ public class GsonUtil {
         });
         gsonBuilder.registerTypeAdapter(Duration.class, new JsonDeserializer<Duration>() {
             @Override
-            public Duration deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext)
-                    throws JsonParseException {
+            public Duration deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
                 return Duration.parse(jsonElement.getAsString());
             }
         });
@@ -37,7 +37,8 @@ public class GsonUtil {
         });
         gsonBuilder.registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
             @Override
-            public LocalDateTime deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            public LocalDateTime deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext)
+                    throws JsonParseException {
                 return LocalDateTime.parse(jsonElement.getAsString());
             }
         });
