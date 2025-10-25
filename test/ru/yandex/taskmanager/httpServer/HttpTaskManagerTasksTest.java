@@ -65,10 +65,7 @@ public class HttpTaskManagerTasksTest {
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(201, response.statusCode());
 
@@ -89,10 +86,7 @@ public class HttpTaskManagerTasksTest {
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -104,10 +98,7 @@ public class HttpTaskManagerTasksTest {
     public void testGetTasks() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -119,10 +110,7 @@ public class HttpTaskManagerTasksTest {
     public void testGetTask() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks/" + task.getId());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -134,10 +122,7 @@ public class HttpTaskManagerTasksTest {
     public void testDeleteTask() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks/" + task.getId());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -148,10 +133,7 @@ public class HttpTaskManagerTasksTest {
     public void testDeleteTasks() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -164,10 +146,7 @@ public class HttpTaskManagerTasksTest {
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks/" + task.getId());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(404, response.statusCode());
     }
@@ -182,10 +161,7 @@ public class HttpTaskManagerTasksTest {
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(406, response.statusCode());
     }
@@ -199,10 +175,7 @@ public class HttpTaskManagerTasksTest {
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(201, response.statusCode());
 
@@ -223,10 +196,7 @@ public class HttpTaskManagerTasksTest {
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -238,10 +208,7 @@ public class HttpTaskManagerTasksTest {
     public void testGetSubtasks() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -253,10 +220,7 @@ public class HttpTaskManagerTasksTest {
     public void testGetSubtask() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/" + subtask.getId());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -268,10 +232,7 @@ public class HttpTaskManagerTasksTest {
     public void testDeleteSubtask() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/" + subtask.getId());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -282,10 +243,7 @@ public class HttpTaskManagerTasksTest {
     public void testDeleteSubtasks() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -298,10 +256,7 @@ public class HttpTaskManagerTasksTest {
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/" + subtask.getId());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(404, response.statusCode());
     }
@@ -316,10 +271,7 @@ public class HttpTaskManagerTasksTest {
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(subtaskJson))
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(subtaskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(406, response.statusCode());
     }
@@ -332,10 +284,7 @@ public class HttpTaskManagerTasksTest {
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(epicJson))
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(epicJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(201, response.statusCode());
 
@@ -351,10 +300,7 @@ public class HttpTaskManagerTasksTest {
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(epicJson))
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(epicJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -367,10 +313,7 @@ public class HttpTaskManagerTasksTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/");
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -385,10 +328,7 @@ public class HttpTaskManagerTasksTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
         Epic epicFromServer = gson.fromJson(response.body(), Epic.class);
@@ -401,10 +341,7 @@ public class HttpTaskManagerTasksTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/" + epic.getId() + "/subtasks");
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -419,10 +356,7 @@ public class HttpTaskManagerTasksTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -434,10 +368,7 @@ public class HttpTaskManagerTasksTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/");
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -452,10 +383,7 @@ public class HttpTaskManagerTasksTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(404, response.statusCode());
 
@@ -470,10 +398,7 @@ public class HttpTaskManagerTasksTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/history/");
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -486,10 +411,7 @@ public class HttpTaskManagerTasksTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/history/");
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(405, response.statusCode());
@@ -501,10 +423,7 @@ public class HttpTaskManagerTasksTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/prioritized/");
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
 
@@ -519,10 +438,7 @@ public class HttpTaskManagerTasksTest {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/prioritized/");
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(405, response.statusCode());

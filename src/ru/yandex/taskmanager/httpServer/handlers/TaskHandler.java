@@ -79,7 +79,7 @@ public class TaskHandler extends BaseHttpHandler {
                 manager.removeTask(id);
                 System.out.println("Задача удалена.");
                 sendResponse(exchange, "Задача успешно удалена.", 200);
-            } else if (parts.length < 3){
+            } else if (parts.length < 3) {
                 manager.clearAllTasks();
                 System.out.println("Все задачи удалены.");
                 sendResponse(exchange, "Задачи удалены.", 200);

@@ -14,7 +14,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
     protected final TaskManager manager;
     protected final Gson gson;
 
-    public  BaseHttpHandler(TaskManager manager, Gson gson) {
+    public BaseHttpHandler(TaskManager manager, Gson gson) {
         this.manager = manager;
         this.gson = gson;
     }
