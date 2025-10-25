@@ -11,18 +11,14 @@ import java.util.List;
 
 public class PrioritizedHandler extends BaseHttpHandler {
 
-    private final TaskManager taskManager;
-    private final Gson gson;
-
     public PrioritizedHandler(TaskManager taskManager, Gson gson) {
-        this.taskManager = taskManager;
-        this.gson = gson;
+        super(taskManager, gson);
     }
 
     @Override
     protected void handleGetRequest(HttpExchange exchange) throws IOException {
         try {
-            List<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+            List<Task> prioritizedTasks = manager.getPrioritizedTasks();
             System.out.println("Сортированный список получен");
             String json = gson.toJson(prioritizedTasks);
 

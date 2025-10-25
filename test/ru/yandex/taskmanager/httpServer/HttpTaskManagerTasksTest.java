@@ -145,6 +145,20 @@ public class HttpTaskManagerTasksTest {
     }
 
     @Test
+    public void testDeleteTasks() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks/");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .DELETE()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        assertTrue(manager.getTasks().isEmpty(), "Задачи не удалены.");
+    }
+
+    @Test
     public void shouldThrowNotFoundExceptionOnTask() throws IOException, InterruptedException {
         manager.removeTask(task.getId());
 
@@ -265,6 +279,20 @@ public class HttpTaskManagerTasksTest {
     }
 
     @Test
+    public void testDeleteSubtasks() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/subtasks/");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .DELETE()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        assertTrue(manager.getSubtasks().isEmpty(), "Подзадачи не удалены.");
+    }
+
+    @Test
     public void shouldThrowNotFoundExceptionOnSubtask() throws IOException, InterruptedException {
         manager.removeSubtask(subtask.getId());
 
@@ -316,7 +344,26 @@ public class HttpTaskManagerTasksTest {
     }
 
     @Test
-    public void testGetEpis() throws IOException, InterruptedException {
+    public void testUpdateEpic() throws IOException, InterruptedException {
+        Epic newEpic = new Epic("New", "New Desc");
+        newEpic.setId(epic.getId());
+        String epicJson = gson.toJson(newEpic);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(epicJson))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        assertEquals(1, manager.getEpics().size(), "Некорректное количество эпиков.");
+        assertEquals(newEpic.getName(), manager.getEpics().getFirst().getName(), "Некорректное имя эпика.");
+    }
+
+    @Test
+    public void testGetEpics() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/");
 
@@ -368,7 +415,7 @@ public class HttpTaskManagerTasksTest {
     }
 
     @Test
-    public void testRemoveEpic() throws IOException, InterruptedException {
+    public void testDeleteEpic() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
 
@@ -380,6 +427,22 @@ public class HttpTaskManagerTasksTest {
         assertEquals(200, response.statusCode());
 
         assertThrows(NotFoundException.class, () -> manager.getEpic(epic.getId()));
+    }
+
+    @Test
+    public void testDeleteEpics() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/epics/");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .DELETE()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        assertTrue(manager.getEpics().isEmpty(), "Эпики не удалены.");
+        assertTrue(manager.getSubtasks().isEmpty(), "Подзадачи не удалены.");
     }
 
     @Test

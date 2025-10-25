@@ -12,13 +12,8 @@ import java.util.List;
 
 public class TaskHandler extends BaseHttpHandler {
 
-    private final TaskManager manager;
-    private final Gson gson;
-
     public TaskHandler(TaskManager manager, Gson gson) {
-        this.manager = manager;
-        this.gson = gson;
-
+        super(manager, gson);
     }
 
     @Override
@@ -50,8 +45,8 @@ public class TaskHandler extends BaseHttpHandler {
     protected void handlePostRequest(HttpExchange exchange) throws IOException {
         try {
             String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-            if (requestBody.equals("")) {
-                sendResponse(exchange, "Некорректное тело запроса.", 400);
+            if (requestBody.isBlank()) {
+                sendResponse(exchange, "Пустое тело запроса.", 400);
                 return;
             }
 
@@ -77,15 +72,24 @@ public class TaskHandler extends BaseHttpHandler {
 
     @Override
     protected void handleDeleteRequest(HttpExchange exchange) throws IOException {
-        String[] parts = exchange.getRequestURI().getPath().split("/");
-        if (parts.length == 3) {
-            int id = Integer.parseInt(parts[2]);
-            manager.removeTask(id);
-            System.out.println("Задача удалена.");
-            sendResponse(exchange, "Задача успешно удалена.", 200);
-        } else {
-            sendResponse(exchange, "Неверный запрос для данного метода.", 400);
+        try {
+            String[] parts = exchange.getRequestURI().getPath().split("/");
+            if (parts.length == 3) {
+                int id = Integer.parseInt(parts[2]);
+                manager.removeTask(id);
+                System.out.println("Задача удалена.");
+                sendResponse(exchange, "Задача успешно удалена.", 200);
+            } else if (parts.length < 3){
+                manager.clearAllTasks();
+                System.out.println("Все задачи удалены.");
+                sendResponse(exchange, "Задачи удалены.", 200);
+            } else {
+                sendResponse(exchange, "Некорректный запрос.", 400);
+            }
+        } catch (IOException e) {
+            sendInternalServerError(exchange);
         }
+
     }
 }
 

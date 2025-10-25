@@ -12,12 +12,8 @@ import java.util.List;
 
 public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
 
-    private final TaskManager manager;
-    private final Gson gson;
-
     public SubtaskHandler(TaskManager manager, Gson gson) {
-        this.manager = manager;
-        this.gson = gson;
+        super(manager, gson);
     }
 
     @Override
@@ -40,7 +36,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
             }
         } catch (NotFoundException e) {
             sendNotFound(exchange);
-        } catch (Exception e) {
+        } catch (IOException e) {
             sendInternalServerError(exchange);
         }
     }
@@ -49,8 +45,8 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
     protected void handlePostRequest(HttpExchange exchange) throws IOException {
         try {
             String requestBody = new String(exchange.getRequestBody().readAllBytes());
-            if (requestBody.equals("")) {
-                sendResponse(exchange, "Некорректное тело запроса.", 400);
+            if (requestBody.isBlank()) {
+                sendResponse(exchange, "Пустое тело запроса.", 400);
                 return;
             }
             Subtask subtask = gson.fromJson(requestBody, Subtask.class);
@@ -69,23 +65,33 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
             sendHasIntersection(exchange);
         } catch (NotFoundException e) {
             sendNotFound(exchange);
-        } catch (Exception e) {
+        } catch (IOException e) {
             sendInternalServerError(exchange);
         }
     }
 
     @Override
     protected void handleDeleteRequest(HttpExchange exchange) throws IOException {
-        String[] pathParts = exchange.getRequestURI().getPath().split("/");
+        try {
+            String[] pathParts = exchange.getRequestURI().getPath().split("/");
 
-        if (pathParts.length == 3) {
-            int id = Integer.parseInt(pathParts[2]);
-            manager.removeSubtask(id);
-            System.out.println("Задача удалена.");
-            sendResponse(exchange, "Подзадача успешно удалена.", 200);
-        } else {
-            sendResponse(exchange, "Неверный запрос для данного метода.", 400);
+            if (pathParts.length == 3) {
+                int id = Integer.parseInt(pathParts[2]);
+                manager.removeSubtask(id);
+                System.out.println("Подзадача удалена.");
+                sendResponse(exchange, "Подзадача успешно удалена.", 200);
+            } else if (pathParts.length < 3) {
+                manager.clearAllSubtasks();
+                System.out.println("Подзадачи удалены");
+                sendResponse(exchange, "Подзадачи удалены.", 200);
+            } else {
+                sendResponse(exchange, "Неверный запрос для данного метода.", 400);
+            }
+        } catch (IOException e) {
+            sendInternalServerError(exchange);
         }
+
+
     }
 
 }

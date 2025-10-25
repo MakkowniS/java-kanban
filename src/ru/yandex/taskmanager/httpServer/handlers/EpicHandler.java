@@ -12,12 +12,10 @@ import java.util.List;
 
 public class EpicHandler extends BaseHttpHandler {
 
-    private final TaskManager manager;
-    private final Gson gson;
+
 
     public EpicHandler(TaskManager manager, Gson gson) {
-        this.manager = manager;
-        this.gson = gson;
+        super(manager, gson);
     }
 
     @Override
@@ -50,7 +48,7 @@ public class EpicHandler extends BaseHttpHandler {
             }
         } catch (NotFoundException e) {
             sendNotFound(exchange);
-        } catch (Exception e) {
+        } catch (IOException e) {
             sendInternalServerError(exchange);
         }
     }
@@ -59,16 +57,23 @@ public class EpicHandler extends BaseHttpHandler {
     protected void handlePostRequest(HttpExchange exchange) throws IOException {
         try {
             String requestBody = new String(exchange.getRequestBody().readAllBytes());
-            if (requestBody.equals("")) {
-                sendResponse(exchange, "Некорректное тело запроса.", 400);
+            if (requestBody.isBlank()) {
+                sendResponse(exchange, "Пустое тело запроса.", 400);
                 return;
             }
             Epic epic = gson.fromJson(requestBody, Epic.class);
-            manager.createEpic(epic);
-            System.out.println("Эпик создан.");
-
-            sendResponse(exchange, "Эпик успешно создан.", 201);
-        } catch (Exception e) {
+            if (epic.getId() != 0) {
+                manager.updateEpic(epic);
+                System.out.println("Эпик обновлён.");
+                sendResponse(exchange, "Эпик успешно обновлён.", 200);
+            } else {
+                manager.createEpic(epic);
+                System.out.println("Эпик создан.");
+                sendResponse(exchange, "Эпик успешно создан.", 201);
+            }
+        } catch (NotFoundException e) {
+            sendNotFound(exchange);
+        } catch (IOException e) {
             sendInternalServerError(exchange);
         }
     }
@@ -84,11 +89,14 @@ public class EpicHandler extends BaseHttpHandler {
                 System.out.println("Эпик удалён.");
 
                 sendResponse(exchange, "Эпик успешно удалён.", 200);
+            } else if (pathParts.length < 3) {
+                manager.clearAllEpics();
+                System.out.println("Эпики удалены.");
+                sendResponse(exchange, "Эпики успешно удалены.", 200);
             } else {
-                sendResponse(exchange, "Неверный запрос для данного метода.", 400);
+                sendResponse(exchange, "Некорректный запрос.", 400);
             }
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             sendInternalServerError(exchange);
         }
     }

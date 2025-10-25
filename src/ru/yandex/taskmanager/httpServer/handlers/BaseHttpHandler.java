@@ -1,13 +1,23 @@
 package ru.yandex.taskmanager.httpServer.handlers;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import ru.yandex.taskmanager.manager.TaskManager;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public abstract class BaseHttpHandler implements HttpHandler {
+
+    protected final TaskManager manager;
+    protected final Gson gson;
+
+    public  BaseHttpHandler(TaskManager manager, Gson gson) {
+        this.manager = manager;
+        this.gson = gson;
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
