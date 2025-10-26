@@ -16,6 +16,7 @@ public class Task {
     public Task(String name, String description) { // Конструктор для обычных задач и подзадач
         this.name = name;
         this.description = description;
+        this.id = 0;
         this.status = StatusOfTask.NEW;
         this.duration = Duration.ZERO;
     }
